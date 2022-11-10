@@ -22,3 +22,12 @@ def test_area_of_circle():
     """
     result = eval_program(program)
     assert result == lobject.List([lobject.Integer(314 * 10 * 10)])
+
+
+def test_sqr_function():
+    program = """(
+        (define sqr (lambda (r) (* r r)))
+        (sqr 10)
+    )"""
+    result = eval_program(program)
+    assert result == lobject.List([lobject.Integer(10 * 10)])

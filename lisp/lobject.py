@@ -89,3 +89,27 @@ class List(Object):
         sb.append(")")
 
         return "".join(sb)
+
+
+class Lambda(Object):
+    def __init__(self, params, body):
+        super().__init__(ObjectType.LAMBDA)
+        self.params: List[str] = params
+        self.body: List[Object] = body
+
+
+# class Lambda(Object):
+#     def __init__(self, params: List[str], body: List[Object]):
+#         super().__init__(ObjectType.LAMBDA)
+#         self.params = params
+#         self.body = body
+
+#     def __str__(self) -> str:
+#         sb = []
+#         sb.append("Lambda(")
+#         for param in self.params:
+#             sb.append("{} ".format(param))
+#         sb.append(")")
+#         for expr in self.body:
+#             sb.append(" {}".format(expr))
+#         return "".join(sb)
