@@ -3,28 +3,14 @@ from enum import IntEnum, auto
 from typing import List
 
 
-class ObjectType(IntEnum):
-    VOID = auto()
-    INTEGER = auto()
-    BOOL = auto()
-    SYMBOL = auto()
-    LAMBDA = auto()
-    LIST = auto()
-
-
 class Object(ABC):
-    object_type: ObjectType
-
-    def __init__(self, object_type: ObjectType):
-        self.object_type = object_type
-
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
 
 class _Void(Object):
     def __init__(self):
-        super().__init__(ObjectType.VOID)
+        super().__init__()
 
     def __eq__(self, other: object) -> bool:
         if other is None or not isinstance(other, _Void):
@@ -40,7 +26,7 @@ Void = _Void()
 
 class Integer(Object):
     def __init__(self, i: int):
-        super().__init__(ObjectType.INTEGER)
+        super().__init__()
         self.i = i
 
     def __str__(self) -> str:
@@ -54,7 +40,7 @@ class Integer(Object):
 
 class Symbol(Object):
     def __init__(self, s: str):
-        super().__init__(ObjectType.SYMBOL)
+        super().__init__()
         self.s = s
 
     def __str__(self) -> str:
@@ -68,7 +54,7 @@ class Symbol(Object):
 
 class Bool(Object):
     def __init__(self, b: bool):
-        super().__init__(ObjectType.BOOL)
+        super().__init__()
         self.b = b
 
     def __str__(self) -> str:
@@ -82,7 +68,7 @@ class Bool(Object):
 
 class LList(Object):
     def __init__(self, object_list: List[Object]):
-        super().__init__(ObjectType.LIST)
+        super().__init__()
         self.object_list = object_list
 
     def __eq__(self, other: object) -> bool:
@@ -110,7 +96,7 @@ class LList(Object):
 
 class Lambda(Object):
     def __init__(self, params, body):
-        super().__init__(ObjectType.LAMBDA)
+        super().__init__()
         self.params: List[str] = params
         self.body: List[Object] = body
 

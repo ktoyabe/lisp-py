@@ -21,18 +21,18 @@ def _eval_symbol(s: str, environment: env.Env) -> lobject.Object:
 def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
     if isinstance(o, lobject.LList):
         return _eval_list(o.object_list, environment)
-    elif o.object_type == lobject.ObjectType.VOID:
+    elif o == lobject.Void:
         return lobject.Void
-    elif o.object_type == lobject.ObjectType.LAMBDA:
+    elif isinstance(o, lobject.Lambda):
         raise NotImplementedError("eval lambda is not implemented")
-    elif o.object_type == lobject.ObjectType.BOOL:
+    elif isinstance(o, lobject.Bool):
         raise NotImplementedError("eval bool is not implemented")
     elif isinstance(o, lobject.Integer):
         return lobject.Integer(o.i)
     elif isinstance(o, lobject.Symbol):
         return _eval_symbol(o.s, environment)
     else:
-        raise EvalError("unknown object type. object_type={}".format(o.object_type))
+        raise EvalError("unknown object type. object_type={}".format(type(o)))
 
 
 def _eval_define(
@@ -74,7 +74,7 @@ def _eval_function_call(
     if lambda_obj is None:
         raise EvalError("Unbound symbol: {}".format(sym))
     if not isinstance(lambda_obj, lobject.Lambda):
-        raise EvalError("Not a lambda. object_type={}".format(lambda_obj.object_type))
+        raise EvalError("Not a lambda. object_type={}".format(type(lambda_obj)))
 
     params: List[str] = lambda_obj.params
     body = lambda_obj.body
@@ -121,7 +121,7 @@ def _eval_list(object_list: List[lobject.Object], environment: env.Env):
         new_list: List[lobject.Object] = []
         for obj in object_list:
             result = _eval_obj(obj, environment)
-            if result.object_type == lobject.ObjectType.VOID:
+            if result == lobject.Void:
                 pass
             else:
                 new_list.append(result)
