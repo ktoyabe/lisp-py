@@ -10,7 +10,7 @@ class ParseError(Exception):
 
 
 def _parse_list(tokens: List[token.Token]):
-    List[lobject.Object]
+    lobject.Object
 
     t = tokens.pop(-1)
     if t != token.LParen:
@@ -35,7 +35,7 @@ def _parse_list(tokens: List[token.Token]):
 
 
 def parse(tokens: List[token.Token]):
-    List[lobject.Object]
+    lobject.Object
 
     if len(tokens) == 0:
         raise ParseError("tokens are empty.")
