@@ -18,7 +18,7 @@ def _eval_symbol(s: str, environment: env.Env) -> lobject.Object:
     return val
 
 
-def _eval_obj(o: lobject.Object, environment: env.Env):
+def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
     if o.object_type == lobject.ObjectType.LIST:
         return _eval_list(o.l, environment)
     elif o.object_type == lobject.ObjectType.VOID:
@@ -88,6 +88,20 @@ def _eval_function_call(
     return _eval_obj(lobject.List(body), new_env)
 
 
+def _eval_if(l: List[lobject.List], environment: env.Env) -> lobject.Object:
+    if len(l) != 4:
+        raise EvalError("Invalid number of arguments for if statement")
+
+    cond_obj = _eval_obj(l[1], environment)
+    if cond_obj.object_type != lobject.ObjectType.BOOL:
+        raise EvalError("Condition must be a boolean. actual={}".format(cond_obj))
+
+    if cond_obj.b:
+        return _eval_obj(l[2], environment)
+    else:
+        return _eval_obj(l[3], environment)
+
+
 def _eval_list(l: List[lobject.List], environment: env.Env):
     head = l[0]
     if head.object_type == lobject.ObjectType.SYMBOL:
@@ -97,6 +111,8 @@ def _eval_list(l: List[lobject.List], environment: env.Env):
             return _eval_define(l, environment)
         elif head.s == "lambda":
             return _eval_function_def(l, environment)
+        elif head.s == "if":
+            return _eval_if(l, environment)
         else:
             return _eval_function_call(head.s, l, environment)
     else:

@@ -38,3 +38,8 @@ def test_bool():
     assert eval_program("(> 1 2)") == lobject.Bool(False)
     assert eval_program("(= 1 2)") == lobject.Bool(False)
     assert eval_program("(!= 1 2)") == lobject.Bool(True)
+
+
+def test_if():
+    assert eval_program("(if (< 1 2) 1 2") == lobject.Integer(1)
+    assert eval_program("(if (> 1 2) 1 2") == lobject.Integer(2)
