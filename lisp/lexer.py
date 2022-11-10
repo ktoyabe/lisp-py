@@ -1,13 +1,5 @@
 from abc import ABC
-from enum import IntEnum, auto
 from typing import List
-
-
-class TokenType(IntEnum):
-    INTEGER = auto()
-    SYMBOL = auto()
-    LPAREN = auto()
-    RPAREN = auto()
 
 
 class Token(ABC):
