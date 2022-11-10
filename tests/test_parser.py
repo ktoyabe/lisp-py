@@ -3,9 +3,9 @@ from lisp import lexer, lobject, parser
 
 def test_add():
     tokens = lexer.tokenize("(+ 1 2)")
-    l = parser.parse(tokens)
+    result = parser.parse(tokens)
 
-    assert l == lobject.LList(
+    assert result == lobject.LList(
         [
             lobject.Symbol("+"),
             lobject.Integer(1),
@@ -20,8 +20,8 @@ def test_area_of_circle():
         (* pi (* r r))
     )"""
     tokens = lexer.tokenize(programs)
-    l = parser.parse(tokens)
-    assert l == lobject.LList(
+    result = parser.parse(tokens)
+    assert result == lobject.LList(
         [
             lobject.LList(
                 [
@@ -53,5 +53,5 @@ def test_area_of_circle_str():
         (* pi (* r r))
     )"""
     tokens = lexer.tokenize(programs)
-    l = parser.parse(tokens)
-    assert "{}".format(l) == "((define r 10) (* pi (* r r)))"
+    result = parser.parse(tokens)
+    assert "{}".format(result) == "((define r 10) (* pi (* r r)))"

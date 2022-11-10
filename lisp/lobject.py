@@ -78,15 +78,15 @@ class Bool(Object):
 class LList(Object):
     def __init__(self, object_list: List[Object]):
         super().__init__(ObjectType.LIST)
-        self.l = object_list
+        self.object_list = object_list
 
     def __eq__(self, other: object) -> bool:
         if not super().__eq__(other):
             return False
-        if len(self.l) != len(other.l):
+        if len(self.object_list) != len(other.object_list):
             return False
-        for i, e in enumerate(self.l):
-            if e != other.l[i]:
+        for i, e in enumerate(self.object_list):
+            if e != other.object_list[i]:
                 return False
         return True
 
@@ -94,7 +94,7 @@ class LList(Object):
         sb = []
         sb.append("(")
 
-        for i, o in enumerate(self.l):
+        for i, o in enumerate(self.object_list):
             if i > 0:
                 sb.append(" ")
             sb.append("{}".format(o))
