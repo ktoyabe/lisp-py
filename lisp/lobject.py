@@ -63,6 +63,18 @@ class Symbol(Object):
         return super().__eq__(other) and self.s == other.s
 
 
+class Bool(Object):
+    def __init__(self, b: bool):
+        super().__init__(ObjectType.BOOL)
+        self.b = b
+
+    def __str__(self) -> str:
+        return "{}".format(self.b)
+
+    def __eq__(self, other: object) -> bool:
+        return super().__eq__(other) and self.b == other.b
+
+
 class List(Object):
     def __init__(self, l: List[Object]):
         super().__init__(ObjectType.LIST)

@@ -31,3 +31,10 @@ def test_sqr_function():
     )"""
     result = eval_program(program)
     assert result == lobject.List([lobject.Integer(10 * 10)])
+
+
+def test_bool():
+    assert eval_program("(< 1 2)") == lobject.Bool(True)
+    assert eval_program("(> 1 2)") == lobject.Bool(False)
+    assert eval_program("(= 1 2)") == lobject.Bool(False)
+    assert eval_program("(!= 1 2)") == lobject.Bool(True)

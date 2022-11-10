@@ -135,12 +135,12 @@ def _eval_binary_op(l: List[lobject.List], environment: env.Env):
     elif op == "/":
         return lobject.Integer(left.i // right.i)
     elif op == "<":
-        return lobject.Integer(left.i < right.i)
+        return lobject.Bool(left.i < right.i)
     elif op == ">":
-        return lobject.Integer(left.i > right.i)
+        return lobject.Bool(left.i > right.i)
     elif op == "=":
-        return lobject.Integer(left.i == right.i)
+        return lobject.Bool(left.i == right.i)
     elif op == "!=":
-        return lobject.Integer(left.i != right.i)
+        return lobject.Bool(left.i != right.i)
     else:
         raise EvalError("Invalid infix operator: {}".format(op))
