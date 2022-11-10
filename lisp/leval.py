@@ -19,7 +19,7 @@ def _eval_symbol(s: str, environment: env.Env) -> lobject.Object:
 
 
 def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
-    if o.object_type == lobject.ObjectType.LIST:
+    if isinstance(o, lobject.LList):
         return _eval_list(o.object_list, environment)
     elif o.object_type == lobject.ObjectType.VOID:
         return lobject.Void
@@ -27,9 +27,9 @@ def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
         raise NotImplementedError("eval lambda is not implemented")
     elif o.object_type == lobject.ObjectType.BOOL:
         raise NotImplementedError("eval bool is not implemented")
-    elif o.object_type == lobject.ObjectType.INTEGER:
+    elif isinstance(o, lobject.Integer):
         return lobject.Integer(o.i)
-    elif o.object_type == lobject.ObjectType.SYMBOL:
+    elif isinstance(o, lobject.Symbol):
         return _eval_symbol(o.s, environment)
     else:
         raise EvalError("unknown object type. object_type={}".format(o.object_type))
@@ -41,7 +41,7 @@ def _eval_define(
     if len(object_list) != 3:
         raise EvalError("Invalid number of arguments for define")
 
-    if object_list[1].object_type != lobject.ObjectType.SYMBOL:
+    if not isinstance(object_list[1], lobject.Symbol):
         raise EvalError("Invalid define")
     sym = object_list[1].s
 
@@ -53,16 +53,16 @@ def _eval_define(
 
 def _eval_function_def(object_list: List[lobject.Object]) -> lobject.Object:
     # parse parameters
-    if object_list[1].object_type != lobject.ObjectType.LIST:
+    if not isinstance(object_list[1], lobject.LList):
         raise EvalError('Invalid lambda parameter. "{}"'.format(object_list[1]))
     params: List[str] = []
     for param in object_list[1].object_list:
-        if param.object_type != lobject.ObjectType.SYMBOL:
+        if not isinstance(param, lobject.Symbol):
             raise EvalError('Invalid lambda parameter. "{}"'.format(param))
         params.append(param.s)
 
     # parse body
-    if object_list[2].object_type != lobject.ObjectType.LIST:
+    if not isinstance(object_list[2], lobject.LList):
         raise EvalError("Invalid lambda. body must be lobject.LList")
     return lobject.Lambda(params, object_list[2].object_list.copy())
 
@@ -73,7 +73,7 @@ def _eval_function_call(
     lambda_obj = environment.get(sym)
     if lambda_obj is None:
         raise EvalError("Unbound symbol: {}".format(sym))
-    if lambda_obj.object_type != lobject.ObjectType.LAMBDA:
+    if not isinstance(lambda_obj, lobject.Lambda):
         raise EvalError("Not a lambda. object_type={}".format(lambda_obj.object_type))
 
     params: List[str] = lambda_obj.params
@@ -95,7 +95,7 @@ def _eval_if(object_list: List[lobject.Object], environment: env.Env) -> lobject
         raise EvalError("Invalid number of arguments for if statement")
 
     cond_obj = _eval_obj(object_list[1], environment)
-    if cond_obj.object_type != lobject.ObjectType.BOOL:
+    if not isinstance(cond_obj, lobject.Bool):
         raise EvalError("Condition must be a boolean. actual={}".format(cond_obj))
 
     if cond_obj.b:
@@ -106,7 +106,7 @@ def _eval_if(object_list: List[lobject.Object], environment: env.Env) -> lobject
 
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):
     head = object_list[0]
-    if head.object_type == lobject.ObjectType.SYMBOL:
+    if isinstance(head, lobject.Symbol):
         if head.s in ["+", "-", "*", "/", "<", ">", "=", "!="]:
             return _eval_binary_op(object_list, environment)
         elif head.s == "define":
@@ -135,6 +135,8 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
                 len(object_list)
             )
         )
+    if not isinstance(object_list[0], lobject.Symbol):
+        raise EvalError("Operator must be Symbol. {}".format(object_list[0]))
 
     op = object_list[0].s
     left = _eval_obj(object_list[1], environment)
