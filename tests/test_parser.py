@@ -45,3 +45,13 @@ def test_area_of_circle():
             ),
         ]
     )
+
+
+def test_area_of_circle_str():
+    programs = """(
+        (define r 10)
+        (* pi (* r r))
+    )"""
+    tokens = token.tokenize(programs)
+    l = parser.parse(tokens)
+    assert "{}".format(l) == "((define r 10) (* pi (* r r)))"

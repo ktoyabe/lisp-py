@@ -82,10 +82,10 @@ class List(Object):
         sb = []
         sb.append("(")
 
-        for i, o in enumerate(l):
+        for i, o in enumerate(self.l):
             if i > 0:
                 sb.append(" ")
-            sb.append("".format(o))
+            sb.append("{}".format(o))
         sb.append(")")
 
         return "".join(sb)
