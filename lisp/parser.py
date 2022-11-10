@@ -18,15 +18,15 @@ def _parse_list(tokens: List[lexer.Token]) -> lobject.Object:
     while len(tokens) != 0:
         t = tokens.pop(-1)
 
-        if t.token_type == lexer.TokenType.INTEGER:
+        if isinstance(t, lexer.Integer):
             objects.append(lobject.Integer(t.i))
-        elif t.token_type == lexer.TokenType.SYMBOL:
+        elif isinstance(t, lexer.Symbol):
             objects.append(lobject.Symbol(t.s))
-        elif t.token_type == lexer.TokenType.LPAREN:
+        elif t == lexer.LParen:
             tokens.append(lexer.LParen)
             sub_list = _parse_list(tokens)
             objects.append(sub_list)
-        elif t.token_type == lexer.TokenType.RPAREN:
+        elif t == lexer.RParen:
             return lobject.LList(objects)
 
     return lobject.LList(objects)

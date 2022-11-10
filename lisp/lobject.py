@@ -48,7 +48,9 @@ class Integer(Object):
         return "{}".format(self.i)
 
     def __eq__(self, other: object) -> bool:
-        return super().__eq__(other) and self.i == other.i
+        if other is None or not isinstance(other, Integer):
+            return False
+        return self.i == other.i
 
 
 class Symbol(Object):
@@ -60,7 +62,9 @@ class Symbol(Object):
         return "{}".format(self.s)
 
     def __eq__(self, other: object) -> bool:
-        return super().__eq__(other) and self.s == other.s
+        if other is None or not isinstance(other, Symbol):
+            return False
+        return self.s == other.s
 
 
 class Bool(Object):

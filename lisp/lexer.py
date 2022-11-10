@@ -11,14 +11,6 @@ class TokenType(IntEnum):
 
 
 class Token(ABC):
-    token_type: TokenType
-
-    def __eq__(self, other: object) -> bool:
-        if other is None or type(self) != type(other):
-            return False
-
-        return self.token_type == other.token_type
-
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
@@ -32,7 +24,9 @@ class Integer(Token):
         return "{}".format(self.i)
 
     def __eq__(self, other: object) -> bool:
-        return super().__eq__(other) and self.i == other.i
+        if other is None or not isinstance(other, Integer):
+            return False
+        return self.i == other.i
 
 
 class Symbol(Token):
@@ -44,15 +38,22 @@ class Symbol(Token):
         return self.s
 
     def __eq__(self, other: object) -> bool:
-        return super().__eq__(other) and self.s == other.s
+        if other is None or not isinstance(other, Symbol):
+            return False
+        return self.s == other.s
 
 
 class _SpecialToken(Token):
     def __init__(self, token_type: TokenType, ch: str):
-        self.token_type = token_type
         self.ch = ch
 
-    def __str__(self):
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, _SpecialToken):
+            return False
+
+        return self.ch == other.ch
+
+    def __str__(self) -> str:
         return self.ch
 
 
