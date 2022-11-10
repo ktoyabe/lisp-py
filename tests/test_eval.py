@@ -43,3 +43,13 @@ def test_bool():
 def test_if():
     assert eval_program("(if (< 1 2) 1 2") == lobject.Integer(1)
     assert eval_program("(if (> 1 2) 1 2") == lobject.Integer(2)
+
+
+def test_factorial():
+    program = """(
+        (define fact (lambda (n) (if (< n 1) 1 (* n (fact (- n 1))))))
+        (fact 5)
+    )"""
+
+    result = eval_program(program)
+    assert result == lobject.List([lobject.Integer(120)])

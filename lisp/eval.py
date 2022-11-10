@@ -43,7 +43,7 @@ def _eval_define(l: List[lobject.List], environment: env.Env) -> lobject.Object:
         raise EvalError("Invalid define")
     sym = l[1].s
 
-    val = _eval_obj(l[2], env)
+    val = _eval_obj(l[2], environment)
     environment.set(sym, val)
 
     return lobject.Void
@@ -82,7 +82,7 @@ def _eval_function_call(
         # i + 1 => skip function name when function call.
         # ex)  function def : (define sqr (r) (* r r)) ---> r index is 0
         #      function call: (sqr 10) ---> i + 1 (0 + 1) is 10
-        val = _eval_obj(l[i + 1], env)
+        val = _eval_obj(l[i + 1], environment)
         new_env.set(param, val)
 
     return _eval_obj(lobject.List(body), new_env)
