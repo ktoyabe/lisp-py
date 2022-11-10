@@ -6,6 +6,15 @@
 			"version": "lts"
 		},
 		"ghcr.io/devcontainers/features/git:1": {}
+	},
+
+	"settings": {
+		"python.formatting.provider": "black",
+		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+		"python.testing.pytestEnabled": true,
+		"[python]":{
+			"editor.formatOnSave": true
+		}
 	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
