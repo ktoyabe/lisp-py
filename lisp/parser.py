@@ -34,9 +34,7 @@ def _parse_list(tokens: List[lexer.Token]):
     return lobject.List(objects)
 
 
-def parse(tokens: List[lexer.Token]):
-    lobject.Object
-
+def parse(tokens: List[lexer.Token]) -> lobject.Object:
     if len(tokens) == 0:
         raise ParseError("tokens are empty.")
 
