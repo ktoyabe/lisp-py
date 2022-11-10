@@ -82,7 +82,7 @@ def tokenize(program: str) -> List[Token]:
             try:
                 i = int(word)
                 tokens.append(Integer(i))
-            except Exception:
+            except ValueError:
                 tokens.append(Symbol(word))
 
     return tokens

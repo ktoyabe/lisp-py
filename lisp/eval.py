@@ -6,7 +6,7 @@ class EvalError(Exception):
     pass
 
 
-def eval(o: lobject.Object, environment: env.Env):
+def evaluate(o: lobject.Object, environment: env.Env):
     return _eval_obj(o, environment)
 
 
@@ -49,7 +49,7 @@ def _eval_define(l: List[lobject.LList], environment: env.Env) -> lobject.Object
     return lobject.Void
 
 
-def _eval_function_def(l: List[lobject.LList], environment: env.Env) -> lobject.Object:
+def _eval_function_def(l: List[lobject.LList]) -> lobject.Object:
     # parse parameters
     if l[1].object_type != lobject.ObjectType.LIST:
         raise EvalError('Invalid lambda parameter. "{}"'.format(l[1]))
@@ -110,7 +110,7 @@ def _eval_list(l: List[lobject.LList], environment: env.Env):
         elif head.s == "define":
             return _eval_define(l, environment)
         elif head.s == "lambda":
-            return _eval_function_def(l, environment)
+            return _eval_function_def(l)
         elif head.s == "if":
             return _eval_if(l, environment)
         else:
@@ -129,7 +129,7 @@ def _eval_list(l: List[lobject.LList], environment: env.Env):
 def _eval_binary_op(l: List[lobject.LList], environment: env.Env):
     if len(l) != 3:
         raise EvalError(
-            "Invalid number of arguments for infix operator. len={}", len(l)
+            "Invalid number of arguments for infix operator. len={}".format(len(l))
         )
 
     op = l[0].s

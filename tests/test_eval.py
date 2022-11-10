@@ -5,7 +5,7 @@ def eval_program(program: str):
     environment = env.new()
     tokens = lexer.tokenize(program)
     o = parser.parse(tokens)
-    return eval.eval(o, environment)
+    return eval.evaluate(o, environment)
 
 
 def test_simple_add():

@@ -9,9 +9,7 @@ class ParseError(Exception):
         super().__init__("Parse error: {}".format(err))
 
 
-def _parse_list(tokens: List[lexer.Token]):
-    lobject.Object
-
+def _parse_list(tokens: List[lexer.Token]) -> lobject.Object:
     t = tokens.pop(-1)
     if t != lexer.LParen:
         raise ParseError("Expected LParen, found {}".format(t))
