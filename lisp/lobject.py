@@ -18,12 +18,6 @@ class Object(ABC):
     def __init__(self, object_type: ObjectType):
         self.object_type = object_type
 
-    def __eq__(self, other: object) -> bool:
-        if other is None or type(self) != type(other):
-            return False
-
-        return self.object_type == other.object_type
-
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
@@ -31,6 +25,11 @@ class Object(ABC):
 class _Void(Object):
     def __init__(self):
         super().__init__(ObjectType.VOID)
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, _Void):
+            return False
+        return True
 
     def __str__(self) -> str:
         return "Void"
@@ -76,7 +75,9 @@ class Bool(Object):
         return "{}".format(self.b)
 
     def __eq__(self, other: object) -> bool:
-        return super().__eq__(other) and self.b == other.b
+        if other is None or not isinstance(other, Bool):
+            return False
+        return self.b == other.b
 
 
 class LList(Object):
@@ -85,7 +86,7 @@ class LList(Object):
         self.object_list = object_list
 
     def __eq__(self, other: object) -> bool:
-        if not super().__eq__(other):
+        if other is None or not isinstance(other, LList):
             return False
         if len(self.object_list) != len(other.object_list):
             return False
