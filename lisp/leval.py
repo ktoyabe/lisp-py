@@ -148,21 +148,25 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
     if type(right) != lobject.Integer:
         raise EvalError("Right operand must be an integer {}".format(right))
 
+    return _eval_binary_op_with_intval(op, left.i, right.i)
+
+
+def _eval_binary_op_with_intval(op: str, lhs: int, rhs: int) -> lobject.Object:
     if op == "+":
-        return lobject.Integer(left.i + right.i)
+        return lobject.Integer(lhs + rhs)
     elif op == "-":
-        return lobject.Integer(left.i - right.i)
+        return lobject.Integer(lhs - rhs)
     elif op == "*":
-        return lobject.Integer(left.i * right.i)
+        return lobject.Integer(lhs * rhs)
     elif op == "/":
-        return lobject.Integer(left.i // right.i)
+        return lobject.Integer(lhs // rhs)
     elif op == "<":
-        return lobject.Bool(left.i < right.i)
+        return lobject.Bool(lhs < rhs)
     elif op == ">":
-        return lobject.Bool(left.i > right.i)
+        return lobject.Bool(lhs > rhs)
     elif op == "=":
-        return lobject.Bool(left.i == right.i)
+        return lobject.Bool(lhs == rhs)
     elif op == "!=":
-        return lobject.Bool(left.i != right.i)
+        return lobject.Bool(lhs != rhs)
     else:
         raise EvalError("Invalid infix operator: {}".format(op))
