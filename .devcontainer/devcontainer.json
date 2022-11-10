@@ -11,6 +11,8 @@
 	"settings": {
 		"python.formatting.provider": "black",
 		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+		"python.linting.flake8Enabled": true,
+		"python.linting.pylintEnabled": false,
 		"python.testing.pytestEnabled": true,
 		"[python]":{
 			"editor.formatOnSave": true
