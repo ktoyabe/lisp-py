@@ -1,10 +1,10 @@
-from typing import Mapping, Optional
+from typing import Dict, Optional
 
 from lisp import lobject
 
 
 class Env(object):
-    vars: Mapping[str, lobject.Object]
+    vars: Dict[str, lobject.Object]
 
     def __init__(self, parent) -> None:
         self.parent = parent

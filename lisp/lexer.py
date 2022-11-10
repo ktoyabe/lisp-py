@@ -47,7 +47,7 @@ class Symbol(Token):
         return super().__eq__(other) and self.s == other.s
 
 
-class _SpecialToken:
+class _SpecialToken(Token):
     def __init__(self, token_type: TokenType, ch: str):
         self.token_type = token_type
         self.ch = ch

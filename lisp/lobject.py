@@ -76,9 +76,9 @@ class Bool(Object):
 
 
 class LList(Object):
-    def __init__(self, l: List[Object]):
+    def __init__(self, object_list: List[Object]):
         super().__init__(ObjectType.LIST)
-        self.l = l
+        self.l = object_list
 
     def __eq__(self, other: object) -> bool:
         if not super().__eq__(other):

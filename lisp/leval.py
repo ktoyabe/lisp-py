@@ -35,7 +35,8 @@ def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
         raise EvalError("unknown object type. object_type={}".format(o.object_type))
 
 
-def _eval_define(l: List[lobject.LList], environment: env.Env) -> lobject.Object:
+def _eval_define(l: List[lobject.Object], environment: env.Env) -> lobject.Object:
+
     if len(l) != 3:
         raise EvalError("Invalid number of arguments for define")
 
@@ -49,7 +50,7 @@ def _eval_define(l: List[lobject.LList], environment: env.Env) -> lobject.Object
     return lobject.Void
 
 
-def _eval_function_def(l: List[lobject.LList]) -> lobject.Object:
+def _eval_function_def(l: List[lobject.Object]) -> lobject.Object:
     # parse parameters
     if l[1].object_type != lobject.ObjectType.LIST:
         raise EvalError('Invalid lambda parameter. "{}"'.format(l[1]))
@@ -88,7 +89,7 @@ def _eval_function_call(
     return _eval_obj(lobject.LList(body), new_env)
 
 
-def _eval_if(l: List[lobject.LList], environment: env.Env) -> lobject.Object:
+def _eval_if(l: List[lobject.Object], environment: env.Env) -> lobject.Object:
     if len(l) != 4:
         raise EvalError("Invalid number of arguments for if statement")
 
@@ -102,7 +103,7 @@ def _eval_if(l: List[lobject.LList], environment: env.Env) -> lobject.Object:
         return _eval_obj(l[3], environment)
 
 
-def _eval_list(l: List[lobject.LList], environment: env.Env):
+def _eval_list(l: List[lobject.Object], environment: env.Env):
     head = l[0]
     if head.object_type == lobject.ObjectType.SYMBOL:
         if head.s in ["+", "-", "*", "/", "<", ">", "=", "!="]:
@@ -126,7 +127,7 @@ def _eval_list(l: List[lobject.LList], environment: env.Env):
         return lobject.LList(new_list)
 
 
-def _eval_binary_op(l: List[lobject.LList], environment: env.Env):
+def _eval_binary_op(l: List[lobject.Object], environment: env.Env):
     if len(l) != 3:
         raise EvalError(
             "Invalid number of arguments for infix operator. len={}".format(len(l))
