@@ -1,5 +1,4 @@
 from abc import ABC
-from enum import IntEnum, auto
 from typing import List
 
 
