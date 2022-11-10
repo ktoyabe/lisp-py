@@ -20,7 +20,7 @@ class Token(ABC):
         return self.token_type == other.token_type
 
     def __ne__(self, other: object) -> bool:
-        return not self.__eq(other)
+        return not self.__eq__(other)
 
 
 class Integer(Token):
@@ -34,9 +34,6 @@ class Integer(Token):
     def __eq__(self, other: object) -> bool:
         return super().__eq__(other) and self.i == other.i
 
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq(other)
-
 
 class Symbol(Token):
     def __init__(self, s: str):
@@ -48,9 +45,6 @@ class Symbol(Token):
 
     def __eq__(self, other: object) -> bool:
         return super().__eq__(other) and self.s == other.s
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq(other)
 
 
 class _SpecialToken:
