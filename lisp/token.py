@@ -47,27 +47,23 @@ class Symbol(Token):
         return self.s
 
     def __eq__(self, other: object) -> bool:
-        print("call Symbol.__eq__")
         return super().__eq__(other) and self.s == other.s
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq(other)
 
 
-class LParen(Token):
-    def __init__(self):
-        self.token_type = TokenType.LPAREN
+class _SpecialToken:
+    def __init__(self, token_type: TokenType, ch: str):
+        self.token_type = token_type
+        self.ch = ch
 
     def __str__(self):
-        return "("
+        return self.ch
 
 
-class RParen(Token):
-    def __init__(self):
-        self.token_type = TokenType.RPAREN
-
-    def __str__(self):
-        return ")"
+LParen = _SpecialToken(TokenType.LPAREN, "(")
+RParen = _SpecialToken(TokenType.RPAREN, ")")
 
 
 class TokenError(Exception):
@@ -85,9 +81,9 @@ def tokenize(program: str) -> List[Token]:
             continue
 
         if word == "(":
-            tokens.append(LParen())
+            tokens.append(LParen)
         elif word == ")":
-            tokens.append(RParen())
+            tokens.append(RParen)
         else:
             try:
                 i = int(word)
