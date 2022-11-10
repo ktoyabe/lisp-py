@@ -1,11 +1,11 @@
-from lisp import lexer, parser, lobject, eval, env
+from lisp import leval, lexer, parser, lobject, env
 
 
 def eval_program(program: str):
     environment = env.new()
     tokens = lexer.tokenize(program)
     o = parser.parse(tokens)
-    return eval.evaluate(o, environment)
+    return leval.evaluate(o, environment)
 
 
 def test_simple_add():

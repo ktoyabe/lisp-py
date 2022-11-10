@@ -1,4 +1,4 @@
-from lisp import lexer, parser, eval, env, lobject
+from lisp import leval, lexer, parser, env, lobject
 
 PROMPT = "lisp-py> "
 
@@ -6,7 +6,7 @@ PROMPT = "lisp-py> "
 def _eval_program(program: str, environment: env.Env):
     tokens = lexer.tokenize(program)
     ast = parser.parse(tokens)
-    return eval.eval(ast, environment)
+    return leval.evaluate(ast, environment)
 
 
 def main():
