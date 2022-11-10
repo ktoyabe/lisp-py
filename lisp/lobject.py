@@ -75,7 +75,7 @@ class Bool(Object):
         return super().__eq__(other) and self.b == other.b
 
 
-class List(Object):
+class LList(Object):
     def __init__(self, l: List[Object]):
         super().__init__(ObjectType.LIST)
         self.l = l

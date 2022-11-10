@@ -21,7 +21,7 @@ def test_area_of_circle():
     )
     """
     result = eval_program(program)
-    assert result == lobject.List([lobject.Integer(314 * 10 * 10)])
+    assert result == lobject.LList([lobject.Integer(314 * 10 * 10)])
 
 
 def test_sqr_function():
@@ -30,7 +30,7 @@ def test_sqr_function():
         (sqr 10)
     )"""
     result = eval_program(program)
-    assert result == lobject.List([lobject.Integer(10 * 10)])
+    assert result == lobject.LList([lobject.Integer(10 * 10)])
 
 
 def test_bool():
@@ -52,4 +52,4 @@ def test_factorial():
     )"""
 
     result = eval_program(program)
-    assert result == lobject.List([lobject.Integer(120)])
+    assert result == lobject.LList([lobject.Integer(120)])

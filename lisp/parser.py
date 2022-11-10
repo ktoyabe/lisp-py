@@ -29,9 +29,9 @@ def _parse_list(tokens: List[lexer.Token]):
             sub_list = _parse_list(tokens)
             objects.append(sub_list)
         elif t.token_type == lexer.TokenType.RPAREN:
-            return lobject.List(objects)
+            return lobject.LList(objects)
 
-    return lobject.List(objects)
+    return lobject.LList(objects)
 
 
 def parse(tokens: List[lexer.Token]) -> lobject.Object:

@@ -5,7 +5,7 @@ def test_add():
     tokens = lexer.tokenize("(+ 1 2)")
     l = parser.parse(tokens)
 
-    assert l == lobject.List(
+    assert l == lobject.LList(
         [
             lobject.Symbol("+"),
             lobject.Integer(1),
@@ -21,20 +21,20 @@ def test_area_of_circle():
     )"""
     tokens = lexer.tokenize(programs)
     l = parser.parse(tokens)
-    assert l == lobject.List(
+    assert l == lobject.LList(
         [
-            lobject.List(
+            lobject.LList(
                 [
                     lobject.Symbol("define"),
                     lobject.Symbol("r"),
                     lobject.Integer(10),
                 ]
             ),
-            lobject.List(
+            lobject.LList(
                 [
                     lobject.Symbol("*"),
                     lobject.Symbol("pi"),
-                    lobject.List(
+                    lobject.LList(
                         [
                             lobject.Symbol("*"),
                             lobject.Symbol("r"),
