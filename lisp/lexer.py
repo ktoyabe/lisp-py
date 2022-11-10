@@ -17,7 +17,6 @@ class Token(ABC):
 
 class Integer(Token):
     def __init__(self, i: int):
-        self.token_type = TokenType.INTEGER
         self.i = i
 
     def __str__(self) -> str:
@@ -31,7 +30,6 @@ class Integer(Token):
 
 class Symbol(Token):
     def __init__(self, s: str):
-        self.token_type = TokenType.SYMBOL
         self.s = s
 
     def __str__(self) -> str:
@@ -44,7 +42,7 @@ class Symbol(Token):
 
 
 class _SpecialToken(Token):
-    def __init__(self, token_type: TokenType, ch: str):
+    def __init__(self, ch: str):
         self.ch = ch
 
     def __eq__(self, other: object) -> bool:
@@ -57,8 +55,8 @@ class _SpecialToken(Token):
         return self.ch
 
 
-LParen = _SpecialToken(TokenType.LPAREN, "(")
-RParen = _SpecialToken(TokenType.RPAREN, ")")
+LParen = _SpecialToken("(")
+RParen = _SpecialToken(")")
 
 
 class TokenError(Exception):
