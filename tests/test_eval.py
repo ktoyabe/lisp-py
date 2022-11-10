@@ -1,9 +1,9 @@
-from lisp import token, parser, lobject, eval, env
+from lisp import lexer, parser, lobject, eval, env
 
 
 def eval_program(program: str):
     environment = env.new()
-    tokens = token.tokenize(program)
+    tokens = lexer.tokenize(program)
     o = parser.parse(tokens)
     return eval.eval(o, environment)
 

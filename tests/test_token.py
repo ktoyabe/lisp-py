@@ -1,14 +1,14 @@
-from lisp import token
+from lisp import lexer
 
 
 def test_add():
-    tokens = token.tokenize("(+ 1 2)")
+    tokens = lexer.tokenize("(+ 1 2)")
     assert tokens == [
-        token.LParen,
-        token.Symbol("+"),
-        token.Integer(1),
-        token.Integer(2),
-        token.RParen,
+        lexer.LParen,
+        lexer.Symbol("+"),
+        lexer.Integer(1),
+        lexer.Integer(2),
+        lexer.RParen,
     ]
 
 
@@ -19,22 +19,22 @@ def test_area_of_circle():
             (* pi (* r r))
         )
     """
-    tokens = token.tokenize(program)
+    tokens = lexer.tokenize(program)
     assert tokens == [
-        token.LParen,
-        token.LParen,
-        token.Symbol("define"),
-        token.Symbol("r"),
-        token.Integer(10),
-        token.RParen,
-        token.LParen,
-        token.Symbol("*"),
-        token.Symbol("pi"),
-        token.LParen,
-        token.Symbol("*"),
-        token.Symbol("r"),
-        token.Symbol("r"),
-        token.RParen,
-        token.RParen,
-        token.RParen,
+        lexer.LParen,
+        lexer.LParen,
+        lexer.Symbol("define"),
+        lexer.Symbol("r"),
+        lexer.Integer(10),
+        lexer.RParen,
+        lexer.LParen,
+        lexer.Symbol("*"),
+        lexer.Symbol("pi"),
+        lexer.LParen,
+        lexer.Symbol("*"),
+        lexer.Symbol("r"),
+        lexer.Symbol("r"),
+        lexer.RParen,
+        lexer.RParen,
+        lexer.RParen,
     ]

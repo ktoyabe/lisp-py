@@ -1,7 +1,7 @@
 from typing import List
 
 from lisp import lobject
-from lisp import token
+from lisp import lexer
 
 
 class ParseError(Exception):
@@ -9,32 +9,32 @@ class ParseError(Exception):
         super().__init__("Parse error: {}".format(err))
 
 
-def _parse_list(tokens: List[token.Token]):
+def _parse_list(tokens: List[lexer.Token]):
     lobject.Object
 
     t = tokens.pop(-1)
-    if t != token.LParen:
+    if t != lexer.LParen:
         raise ParseError("Expected LParen, found {}".format(t))
 
     objects: List[lobject.Object] = []
     while len(tokens) != 0:
         t = tokens.pop(-1)
 
-        if t.token_type == token.TokenType.INTEGER:
+        if t.token_type == lexer.TokenType.INTEGER:
             objects.append(lobject.Integer(t.i))
-        elif t.token_type == token.TokenType.SYMBOL:
+        elif t.token_type == lexer.TokenType.SYMBOL:
             objects.append(lobject.Symbol(t.s))
-        elif t.token_type == token.TokenType.LPAREN:
-            tokens.append(token.LParen)
+        elif t.token_type == lexer.TokenType.LPAREN:
+            tokens.append(lexer.LParen)
             sub_list = _parse_list(tokens)
             objects.append(sub_list)
-        elif t.token_type == token.TokenType.RPAREN:
+        elif t.token_type == lexer.TokenType.RPAREN:
             return lobject.List(objects)
 
     return lobject.List(objects)
 
 
-def parse(tokens: List[token.Token]):
+def parse(tokens: List[lexer.Token]):
     lobject.Object
 
     if len(tokens) == 0:

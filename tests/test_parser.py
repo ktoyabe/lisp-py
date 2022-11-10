@@ -1,8 +1,8 @@
-from lisp import token, lobject, parser
+from lisp import lexer, lobject, parser
 
 
 def test_add():
-    tokens = token.tokenize("(+ 1 2)")
+    tokens = lexer.tokenize("(+ 1 2)")
     l = parser.parse(tokens)
 
     assert l == lobject.List(
@@ -19,7 +19,7 @@ def test_area_of_circle():
         (define r 10)
         (* pi (* r r))
     )"""
-    tokens = token.tokenize(programs)
+    tokens = lexer.tokenize(programs)
     l = parser.parse(tokens)
     assert l == lobject.List(
         [
@@ -52,6 +52,6 @@ def test_area_of_circle_str():
         (define r 10)
         (* pi (* r r))
     )"""
-    tokens = token.tokenize(programs)
+    tokens = lexer.tokenize(programs)
     l = parser.parse(tokens)
     assert "{}".format(l) == "((define r 10) (* pi (* r r)))"
