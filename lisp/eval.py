@@ -1,18 +1,26 @@
 from typing import List
-from lisp import lobject
+from lisp import lobject, env
 
 
 class EvalError(Exception):
     pass
 
 
-def eval(o: lobject.Object):
-    return _eval_obj(o)
+def eval(o: lobject.Object, environment: env.Env):
+    return _eval_obj(o, environment)
 
 
-def _eval_obj(o: lobject.Object):
+def _eval_symbol(s: str, environment: env.Env) -> lobject.Object:
+    val = environment.get(s)
+    if val is None:
+        raise EvalError("Unbound symbol: {}".format(s))
+
+    return val
+
+
+def _eval_obj(o: lobject.Object, environment: env.Env):
     if o.object_type == lobject.ObjectType.LIST:
-        return _eval_list(o.l)
+        return _eval_list(o.l, environment)
     elif o.object_type == lobject.ObjectType.VOID:
         return lobject.Void
     elif o.object_type == lobject.ObjectType.LAMBDA:
@@ -22,29 +30,52 @@ def _eval_obj(o: lobject.Object):
     elif o.object_type == lobject.ObjectType.INTEGER:
         return lobject.Integer(o.i)
     elif o.object_type == lobject.ObjectType.SYMBOL:
-        return lobject.Symbol(o.s)
+        return _eval_symbol(o.s, environment)
     else:
         raise EvalError("unknown object type. object_type={}".format(o.object_type))
 
 
-def _eval_list(l: List[lobject.List]):
+def _eval_define(l: List[lobject.List], environment: env.Env) -> lobject.Object:
+    if len(l) != 3:
+        raise EvalError("Invalid number of arguments for define")
+
+    if l[1].object_type != lobject.ObjectType.SYMBOL:
+        raise EvalError("Invalid define")
+    sym = l[1].s
+
+    val = _eval_obj(l[2], env)
+    environment.set(sym, val)
+
+    return lobject.Void
+
+
+def _eval_list(l: List[lobject.List], environment: env.Env):
     head = l[0]
     if head.object_type == lobject.ObjectType.SYMBOL:
         if head.s in ["+", "-", "*", "/", "<", ">", "=", "!="]:
-            return _eval_binary_op(l)
+            return _eval_binary_op(l, environment)
+        elif head.s == "define":
+            return _eval_define(l, environment)
     else:
-        raise NotImplementedError("_eval_list not implemented yet")
+        new_list: List[lobject.Object] = []
+        for obj in l:
+            result = _eval_obj(obj, environment)
+            if result.object_type == lobject.ObjectType.VOID:
+                pass
+            else:
+                new_list.append(result)
+        return lobject.List(new_list)
 
 
-def _eval_binary_op(l: List[lobject.List]):
+def _eval_binary_op(l: List[lobject.List], environment: env.Env):
     if len(l) != 3:
         raise EvalError(
             "Invalid number of arguments for infix operator. len={}", len(l)
         )
 
     op = l[0].s
-    left = l[1]
-    right = l[2]
+    left = _eval_obj(l[1], environment)
+    right = _eval_obj(l[2], environment)
 
     if type(left) != lobject.Integer:
         raise EvalError("Left operand must be an integer {}".format(left))
