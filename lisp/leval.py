@@ -160,10 +160,49 @@ def _eval_map(
     return lobject.ListData(result_list)
 
 
+def _eval_filter(
+    object_list: List[lobject.Object], environment: env.Env
+) -> lobject.Object:
+    if len(object_list) != 3:
+        raise EvalError("Invalid number of arguments for map {}".format(object_list))
+
+    # check lambda object
+    lambda_obj = _eval_obj(object_list[1], environment)
+    if not isinstance(lambda_obj, lobject.Lambda):
+        raise EvalError("Not a lambda while evaluating map: {}".format(lambda_obj))
+    if len(lambda_obj.params) != 1:
+        raise EvalError(
+            "Invalid number of parameters for map lambda function: {}".format(
+                lambda_obj.params
+            )
+        )
+
+    # check arg_list
+    arg_list = _eval_obj(object_list[2], environment)
+    if not isinstance(arg_list, lobject.ListData):
+        raise EvalError("Invalid map arguments: {}".format(arg_list))
+
+    func_param = lambda_obj.params[0]
+    result_list: List[lobject.Object] = []
+    for arg in arg_list.list_data:
+        val = _eval_obj(arg, environment)
+        new_env = env.extend(environment)
+        new_env.set(func_param, val)
+        result = _eval_obj(lobject.LList(lambda_obj.body), new_env)
+
+        if not isinstance(result, lobject.Bool):
+            raise EvalError("Invalid fitler result: {}".format(result))
+
+        if result.b:
+            result_list.append(val)
+
+    return lobject.ListData(result_list)
+
+
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):
     head = object_list[0]
     if isinstance(head, lobject.Symbol):
-        if head.s in ["+", "-", "*", "/", "<", ">", "=", "!="]:
+        if head.s in ["+", "-", "*", "/", "%", "<", ">", "=", "!="]:
             return _eval_binary_op(object_list, environment)
         elif head.s == "define":
             return _eval_define(object_list, environment)
@@ -175,6 +214,8 @@ def _eval_list(object_list: List[lobject.Object], environment: env.Env):
             return _eval_list_data(object_list, environment)
         elif head.s == "map":
             return _eval_map(object_list, environment)
+        elif head.s == "filter":
+            return _eval_filter(object_list, environment)
         else:
             return _eval_function_call(head.s, object_list, environment)
     else:
@@ -262,6 +303,8 @@ def _eval_binary_op_with_intval(op: str, lhs: int, rhs: int) -> lobject.Object:
         return lobject.Integer(lhs * rhs)
     elif op == "/":
         return lobject.Integer(lhs // rhs)
+    elif op == "%":
+        return lobject.Integer(lhs % rhs)
     elif op == "<":
         return lobject.Bool(lhs < rhs)
     elif op == ">":

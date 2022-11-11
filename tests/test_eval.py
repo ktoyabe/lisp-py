@@ -142,3 +142,24 @@ def test_map():
             )
         ]
     )
+
+
+def test_filter():
+    program = """(
+        (define odd (lambda (x) (= 1 (% x 2))))
+        (define l (list 1 2 3 4 5))
+        (filter odd l)
+    )
+    """
+    result = eval_program(program)
+    assert result == lobject.LList(
+        [
+            lobject.ListData(
+                [
+                    lobject.Integer(1),
+                    lobject.Integer(3),
+                    lobject.Integer(5),
+                ]
+            )
+        ]
+    )
