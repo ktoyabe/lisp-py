@@ -184,6 +184,11 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
     if left_f is not None and right_f is not None:
         return _eval_binary_op_with_floatval(op, left_f.f, right_f.f)
 
+    left_l = _as_list(left)
+    left_r = _as_list(right)
+    if left_l is not None and left_r is not None:
+        return _eval_binary_op_with_listdata(op, left_l.list_data, left_r.list_data)
+
     raise EvalError(
         "Unsupport binary op. op={}, left={}, right={}".format(op, left, right)
     )
@@ -203,6 +208,12 @@ def _as_float(obj: lobject.Object) -> Optional[lobject.Float]:
 
 def _as_string(obj: lobject.Object) -> Optional[lobject.String]:
     if isinstance(obj, lobject.String):
+        return obj
+    return None
+
+
+def _as_list(obj: lobject.Object) -> Optional[lobject.ListData]:
+    if isinstance(obj, lobject.ListData):
         return obj
     return None
 
@@ -252,5 +263,14 @@ def _eval_binary_op_with_floatval(op: str, lhs: float, rhs: float) -> lobject.Ob
         return lobject.Float(lhs * rhs)
     elif op == "/":
         return lobject.Float(lhs / rhs)
+    else:
+        raise EvalError("Invalid infix operator: {}".format(op))
+
+
+def _eval_binary_op_with_listdata(
+    op: str, lhs: List[lobject.Object], rhs: List[lobject.Object]
+) -> lobject.Object:
+    if op == "+":
+        return lobject.ListData(lhs + rhs)
     else:
         raise EvalError("Invalid infix operator: {}".format(op))

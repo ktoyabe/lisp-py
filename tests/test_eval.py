@@ -114,3 +114,10 @@ def test_list_data():
     assert eval_program(program) == lobject.ListData(
         [lobject.Integer(1), lobject.Integer(2), lobject.Integer(3)]
     )
+
+
+def test_list_data_add():
+    program = "(+ (list 1) (list 3 2))"
+    assert eval_program(program) == lobject.ListData(
+        [lobject.Integer(1), lobject.Integer(3), lobject.Integer(2)]
+    )
