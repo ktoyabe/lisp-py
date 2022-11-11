@@ -242,10 +242,13 @@ def _eval_length(
 
     # check lambda object
     obj = _eval_obj(object_list[1], environment)
-    if not isinstance(obj, lobject.ListData):
-        raise EvalError("Not a ListData. {}".format(obj))
+    if isinstance(obj, lobject.ListData):
+        return lobject.Integer(len(obj.list_data))
 
-    return lobject.Integer(len(obj.list_data))
+    if isinstance(obj, lobject.LList):
+        return lobject.Integer(len(obj.object_list))
+
+    raise EvalError("Not a ListData or LList. {}".format(obj))
 
 
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):

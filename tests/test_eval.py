@@ -196,5 +196,9 @@ def test_reduce_and_filter():
     assert result == lobject.LList([lobject.Integer(5)])
 
 
-def test_length():
+def test_length_list_data():
     eval_program("(length (list 1 2 3 4 5))") == lobject.Integer(5)
+
+
+def test_length_list():
+    eval_program("(length (1 2 3 4 5))") == lobject.Integer(5)
