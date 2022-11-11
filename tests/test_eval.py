@@ -163,3 +163,34 @@ def test_filter():
             )
         ]
     )
+
+
+def test_reduce_sum():
+    program = """(
+        (define l (list 1 2 3 4 5))
+        (reduce (lambda (x y) (+ x y)) l)
+    )
+    """
+    result = eval_program(program)
+    assert result == lobject.LList([lobject.Integer(15)])
+
+
+def test_reduce_max():
+    program = """(
+        (define l (list 1 2 5 4 3))
+        (reduce (lambda (x y) (if (> x y) x y)) l)
+    )
+    """
+    result = eval_program(program)
+    assert result == lobject.LList([lobject.Integer(5)])
+
+
+def test_reduce_and_filter():
+    program = """(
+        (define odd (lambda (x) (= 1 (% x 2))))
+        (define l (list 1 2 5 4 3 6))
+        (reduce (lambda (x y) (if (> x y) x y)) (filter odd l))
+    )
+    """
+    result = eval_program(program)
+    assert result == lobject.LList([lobject.Integer(5)])

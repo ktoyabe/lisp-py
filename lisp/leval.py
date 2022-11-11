@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from lisp import lobject, env
 
 
@@ -127,6 +127,21 @@ def _eval_list_data(
     return lobject.ListData(new_list)
 
 
+def _is_valid_lambda(
+    lambda_obj: lobject.Object, valid_num_params: int
+) -> Tuple[bool, Optional[str]]:
+    if not isinstance(lambda_obj, lobject.Lambda):
+        return (False, "Not a lambda while evaluating map: {}".format(lambda_obj))
+    if len(lambda_obj.params) != valid_num_params:
+        return (
+            False,
+            "Invalid number of parameters for lambda function: {}".format(
+                lambda_obj.params
+            ),
+        )
+    return (True, None)
+
+
 def _eval_map(
     object_list: List[lobject.Object], environment: env.Env
 ) -> lobject.Object:
@@ -135,27 +150,22 @@ def _eval_map(
 
     # check lambda object
     lambda_obj = _eval_obj(object_list[1], environment)
-    if not isinstance(lambda_obj, lobject.Lambda):
-        raise EvalError("Not a lambda while evaluating map: {}".format(lambda_obj))
-    if len(lambda_obj.params) != 1:
-        raise EvalError(
-            "Invalid number of parameters for map lambda function: {}".format(
-                lambda_obj.params
-            )
-        )
+    ok, err = _is_valid_lambda(lambda_obj, valid_num_params=1)
+    if not ok:
+        raise EvalError(err)
 
     # check arg_list
     arg_list = _eval_obj(object_list[2], environment)
     if not isinstance(arg_list, lobject.ListData):
         raise EvalError("Invalid map arguments: {}".format(arg_list))
 
-    func_param = lambda_obj.params[0]
+    func_param = lambda_obj.params[0]  # type: ignore
     result_list: List[lobject.Object] = []
     for arg in arg_list.list_data:
         val = _eval_obj(arg, environment)
         new_env = env.extend(environment)
         new_env.set(func_param, val)
-        result = _eval_obj(lobject.LList(lambda_obj.body), new_env)
+        result = _eval_obj(lobject.LList(lambda_obj.body), new_env)  # type: ignore
         result_list.append(result)
     return lobject.ListData(result_list)
 
@@ -164,31 +174,24 @@ def _eval_filter(
     object_list: List[lobject.Object], environment: env.Env
 ) -> lobject.Object:
     if len(object_list) != 3:
-        raise EvalError("Invalid number of arguments for map {}".format(object_list))
+        raise EvalError("Invalid number of arguments for filter {}".format(object_list))
 
     # check lambda object
     lambda_obj = _eval_obj(object_list[1], environment)
-    if not isinstance(lambda_obj, lobject.Lambda):
-        raise EvalError("Not a lambda while evaluating map: {}".format(lambda_obj))
-    if len(lambda_obj.params) != 1:
-        raise EvalError(
-            "Invalid number of parameters for map lambda function: {}".format(
-                lambda_obj.params
-            )
-        )
+    ok, err = _is_valid_lambda(lambda_obj, valid_num_params=1)
 
     # check arg_list
     arg_list = _eval_obj(object_list[2], environment)
     if not isinstance(arg_list, lobject.ListData):
-        raise EvalError("Invalid map arguments: {}".format(arg_list))
+        raise EvalError("Invalid filter arguments: {}".format(arg_list))
 
-    func_param = lambda_obj.params[0]
+    func_param = lambda_obj.params[0]  # type: ignore
     result_list: List[lobject.Object] = []
     for arg in arg_list.list_data:
         val = _eval_obj(arg, environment)
         new_env = env.extend(environment)
         new_env.set(func_param, val)
-        result = _eval_obj(lobject.LList(lambda_obj.body), new_env)
+        result = _eval_obj(lobject.LList(lambda_obj.body), new_env)  # type: ignore
 
         if not isinstance(result, lobject.Bool):
             raise EvalError("Invalid fitler result: {}".format(result))
@@ -197,6 +200,38 @@ def _eval_filter(
             result_list.append(val)
 
     return lobject.ListData(result_list)
+
+
+def _eval_reduce(
+    object_list: List[lobject.Object], environment: env.Env
+) -> lobject.Object:
+    if len(object_list) != 3:
+        raise EvalError("Invalid number of arguments for reduce {}".format(object_list))
+
+    # check lambda object
+    lambda_obj = _eval_obj(object_list[1], environment)
+    ok, err = _is_valid_lambda(lambda_obj, valid_num_params=2)
+
+    # check arg_list
+    arg_list = _eval_obj(object_list[2], environment)
+    if not isinstance(arg_list, lobject.ListData):
+        raise EvalError("Invalid filter arguments: {}".format(arg_list))
+
+    reduce_param1 = lambda_obj.params[0]  # type: ignore
+    reduce_param2 = lambda_obj.params[1]  # type: ignore
+
+    accumulator = _eval_obj(arg_list.list_data[0], environment)
+
+    for arg in arg_list.list_data[1:]:
+        new_env = env.extend(environment)
+        new_env.set(reduce_param1, accumulator)
+
+        val = _eval_obj(arg, environment)
+        new_env.set(reduce_param2, val)
+
+        accumulator = _eval_obj(lobject.LList(lambda_obj.body), new_env)  # type: ignore
+
+    return accumulator
 
 
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):
@@ -216,6 +251,8 @@ def _eval_list(object_list: List[lobject.Object], environment: env.Env):
             return _eval_map(object_list, environment)
         elif head.s == "filter":
             return _eval_filter(object_list, environment)
+        elif head.s == "reduce":
+            return _eval_reduce(object_list, environment)
         else:
             return _eval_function_call(head.s, object_list, environment)
     else:
