@@ -208,3 +208,14 @@ def test_range():
     eval_program("(range 0 10 4)") == lobject.ListData(
         [lobject.Integer(0), lobject.Integer(4), lobject.Integer(8)]
     )
+
+
+def test_sum_n():
+    program = """(
+        (define sum-n
+            (lambda (n a)
+                (if (= n 0) a
+                    (sum-n (- n 1) (+ n a)))))
+        (sum-n 100 0)
+    )"""
+    eval_program(program) == lobject.ListData([lobject.Integer(5050)])
