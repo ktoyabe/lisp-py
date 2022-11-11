@@ -22,6 +22,8 @@ def _parse_list(tokens: List[lexer.Token]) -> lobject.Object:
             objects.append(lobject.Integer(t.i))
         elif isinstance(t, lexer.Symbol):
             objects.append(lobject.Symbol(t.s))
+        elif isinstance(t, lexer.String):
+            objects.append(lobject.String(t.string))
         elif t == lexer.LParen:
             tokens.append(lexer.LParen)
             sub_list = _parse_list(tokens)

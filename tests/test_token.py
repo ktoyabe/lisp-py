@@ -38,3 +38,15 @@ def test_area_of_circle():
         lexer.RParen,
         lexer.RParen,
     ]
+
+
+def test_string():
+    program = '(define str "Hello World")'
+    tokens = lexer.tokenize(program)
+    assert tokens == [
+        lexer.LParen,
+        lexer.Symbol("define"),
+        lexer.Symbol("str"),
+        lexer.String("Hello World"),
+        lexer.RParen,
+    ]

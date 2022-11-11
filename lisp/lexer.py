@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List
+from typing import List, Optional
 
 
 class Token(ABC):
@@ -33,6 +33,19 @@ class Symbol(Token):
         return self.s == other.s
 
 
+class String(Token):
+    def __init__(self, string: str):
+        self.string = string
+
+    def __str__(self) -> str:
+        return self.string
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, String):
+            return False
+        return self.string == other.string
+
+
 class _SpecialToken(Token):
     def __init__(self, ch: str):
         self.ch = ch
@@ -52,28 +65,67 @@ RParen = _SpecialToken(")")
 
 
 class TokenError(Exception):
-    def __init__(self, ch: str):
-        super().__init__("unexpected charactor: {}".format(ch))
+    def __init__(self, err: str):
+        super().__init__("Tokenization error: {}".format(err))
 
 
 def tokenize(program: str) -> List[Token]:
-    program2 = program.replace("(", " ( ").replace(")", " ) ")
-    words = program2.split(" ")
-
     tokens: List[Token] = []
-    for word in words:
-        if word in ["", "\n"]:
-            continue
+    chars = list(program)
 
-        if word == "(":
+    if len(chars) == 0:
+        return tokens
+
+    while len(chars) > 0:
+        ch = chars.pop(0)
+        if ch == "(":
             tokens.append(LParen)
-        elif word == ")":
+        elif ch == ")":
             tokens.append(RParen)
+        elif ch == '"':
+            # read string
+            word_buf = []
+            while len(chars) > 0 and chars[0] != '"':
+                word_buf.append(chars.pop(0))
+
+            if len(chars) > 0 and chars[0] == '"':
+                chars.pop(0)
+            else:
+                raise TokenError("Unterminated string: {}".format("".join(word_buf)))
+
+            word = "".join(word_buf)
+            tokens.append(String(word))
         else:
-            try:
-                i = int(word)
+            word_buf = []
+            while len(chars) > 0 and not _is_whitespace(ch) and ch != "(" and ch != ")":
+                word_buf.append(ch)
+                peek = chars[0]
+                if peek == "(" or peek == ")":
+                    break
+
+                ch = chars.pop(0)
+
+            if len(word_buf) == 0:
+                continue
+
+            word = "".join(word_buf)
+
+            i = _parse_int(word)
+            if i:
                 tokens.append(Integer(i))
-            except ValueError:
-                tokens.append(Symbol(word))
+                continue
+
+            tokens.append(Symbol(word))
 
     return tokens
+
+
+def _is_whitespace(ch: str) -> bool:
+    return ch in [" ", "\t", "\n", "\r"]
+
+
+def _parse_int(word: str) -> Optional[int]:
+    try:
+        return int(word)
+    except ValueError:
+        return None

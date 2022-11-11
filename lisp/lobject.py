@@ -51,6 +51,20 @@ class Symbol(Object):
         return self.s == other.s
 
 
+class String(Object):
+    def __init__(self, string: str):
+        super().__init__()
+        self.string = string
+
+    def __str__(self) -> str:
+        return "{}".format(self.string)
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, String):
+            return False
+        return self.string == other.string
+
+
 class Bool(Object):
     def __init__(self, b: bool):
         super().__init__()

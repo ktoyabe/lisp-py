@@ -37,6 +37,8 @@ def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
         return lobject.Integer(o.i)
     elif isinstance(o, lobject.Symbol):
         return _eval_symbol(o.s, environment)
+    elif isinstance(o, lobject.String):
+        return lobject.String(o.string)
     else:
         raise EvalError("unknown object type. object_type={}".format(type(o)))
 

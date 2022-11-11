@@ -47,8 +47,13 @@ def test_bool_constants():
 
 
 def test_if():
-    assert eval_program("(if (< 1 2) 1 2") == lobject.Integer(1)
-    assert eval_program("(if (> 1 2) 1 2") == lobject.Integer(2)
+    assert eval_program("(if (< 1 2) 1 2)") == lobject.Integer(1)
+    assert eval_program("(if (> 1 2) 1 2)") == lobject.Integer(2)
+
+
+def test_string():
+    program = '(if (< 1 2) "foo bar" "hoge hoge")'
+    assert eval_program(program) == lobject.String("foo bar")
 
 
 def test_factorial():
