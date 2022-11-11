@@ -82,6 +82,22 @@ def test_string_greter():
     assert eval_program('(> "ab c" "ab d")') == lobject.Bool(False)
 
 
+def test_float_add():
+    assert eval_program("(+ 3.14 5.0)") == lobject.Float(8.14)
+
+
+def test_float_sub():
+    assert eval_program("(- 3.14 5.0)") == lobject.Float(3.14 - 5.0)
+
+
+def test_float_mul():
+    assert eval_program("(* 3.14 5.0)") == lobject.Float(3.14 * 5.0)
+
+
+def test_float_div():
+    assert eval_program("(/ 3.14 5.0)") == lobject.Float(3.14 / 5.0)
+
+
 def test_factorial():
     program = """(
         (define fact (lambda (n) (if (< n 1) 1 (* n (fact (- n 1))))))

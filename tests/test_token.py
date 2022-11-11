@@ -50,3 +50,15 @@ def test_string():
         lexer.String("Hello World"),
         lexer.RParen,
     ]
+
+
+def test_float():
+    program = "(define pi 3.14)"
+    tokens = lexer.tokenize(program)
+    assert tokens == [
+        lexer.LParen,
+        lexer.Symbol("define"),
+        lexer.Symbol("pi"),
+        lexer.Float(3.14),
+        lexer.RParen,
+    ]

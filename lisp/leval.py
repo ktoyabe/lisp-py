@@ -35,6 +35,8 @@ def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
         raise NotImplementedError("eval bool is not implemented")
     elif isinstance(o, lobject.Integer):
         return lobject.Integer(o.i)
+    elif isinstance(o, lobject.Float):
+        return lobject.Float(o.f)
     elif isinstance(o, lobject.Symbol):
         return _eval_symbol(o.s, environment)
     elif isinstance(o, lobject.String):
@@ -162,6 +164,11 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
     if left_s is not None and right_s is not None:
         return _eval_binary_op_with_stringval(op, left_s.string, right_s.string)
 
+    left_f = _as_float(left)
+    right_f = _as_float(right)
+    if left_f is not None and right_f is not None:
+        return _eval_binary_op_with_floatval(op, left_f.f, right_f.f)
+
     raise EvalError(
         "Unsupport binary op. op={}, left={}, right={}".format(op, left, right)
     )
@@ -169,6 +176,12 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
 
 def _as_integer(obj: lobject.Object) -> Optional[lobject.Integer]:
     if isinstance(obj, lobject.Integer):
+        return obj
+    return None
+
+
+def _as_float(obj: lobject.Object) -> Optional[lobject.Float]:
+    if isinstance(obj, lobject.Float):
         return obj
     return None
 
@@ -211,5 +224,18 @@ def _eval_binary_op_with_stringval(op: str, lhs: str, rhs: str) -> lobject.Objec
         return lobject.Bool(lhs == rhs)
     elif op == "!=":
         return lobject.Bool(lhs != rhs)
+    else:
+        raise EvalError("Invalid infix operator: {}".format(op))
+
+
+def _eval_binary_op_with_floatval(op: str, lhs: float, rhs: float) -> lobject.Object:
+    if op == "+":
+        return lobject.Float(lhs + rhs)
+    elif op == "-":
+        return lobject.Float(lhs - rhs)
+    elif op == "*":
+        return lobject.Float(lhs * rhs)
+    elif op == "/":
+        return lobject.Float(lhs / rhs)
     else:
         raise EvalError("Invalid infix operator: {}".format(op))

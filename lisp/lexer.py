@@ -20,6 +20,19 @@ class Integer(Token):
         return self.i == other.i
 
 
+class Float(Token):
+    def __init__(self, f: float):
+        self.f = f
+
+    def __str__(self) -> str:
+        return "{}".format(self.f)
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, Float):
+            return False
+        return self.f == other.f
+
+
 class Symbol(Token):
     def __init__(self, s: str):
         self.s = s
@@ -115,6 +128,11 @@ def tokenize(program: str) -> List[Token]:
                 tokens.append(Integer(i))
                 continue
 
+            f = _parse_float(word)
+            if f:
+                tokens.append(Float(f))
+                continue
+
             tokens.append(Symbol(word))
 
     return tokens
@@ -127,5 +145,12 @@ def _is_whitespace(ch: str) -> bool:
 def _parse_int(word: str) -> Optional[int]:
     try:
         return int(word)
+    except ValueError:
+        return None
+
+
+def _parse_float(word: str) -> Optional[float]:
+    try:
+        return float(word)
     except ValueError:
         return None

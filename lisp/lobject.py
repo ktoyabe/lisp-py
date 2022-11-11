@@ -37,6 +37,20 @@ class Integer(Object):
         return self.i == other.i
 
 
+class Float(Object):
+    def __init__(self, f: float):
+        super().__init__()
+        self.f = f
+
+    def __str__(self) -> str:
+        return "{}".format(self.f)
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, Float):
+            return False
+        return self.f == other.f
+
+
 class Symbol(Object):
     def __init__(self, s: str):
         super().__init__()

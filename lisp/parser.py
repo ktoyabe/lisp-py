@@ -20,6 +20,8 @@ def _parse_list(tokens: List[lexer.Token]) -> lobject.Object:
 
         if isinstance(t, lexer.Integer):
             objects.append(lobject.Integer(t.i))
+        elif isinstance(t, lexer.Float):
+            objects.append(lobject.Float(t.f))
         elif isinstance(t, lexer.Symbol):
             objects.append(lobject.Symbol(t.s))
         elif isinstance(t, lexer.String):
