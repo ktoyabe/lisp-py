@@ -5,7 +5,8 @@ def eval_program(program: str):
     environment = env.new()
     tokens = lexer.tokenize(program)
     o = parser.parse(tokens)
-    return leval.evaluate(o, environment)
+    result = leval.evaluate(o, environment)
+    return result
 
 
 def test_simple_add():
@@ -106,3 +107,10 @@ def test_factorial():
 
     result = eval_program(program)
     assert result == lobject.LList([lobject.Integer(120)])
+
+
+def test_list_data():
+    program = "(if #t (list 1 2 3) (list 4 5))"
+    assert eval_program(program) == lobject.ListData(
+        [lobject.Integer(1), lobject.Integer(2), lobject.Integer(3)]
+    )

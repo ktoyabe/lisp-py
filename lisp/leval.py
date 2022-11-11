@@ -41,6 +41,8 @@ def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
         return _eval_symbol(o.s, environment)
     elif isinstance(o, lobject.String):
         return lobject.String(o.string)
+    elif isinstance(o, lobject.ListData):
+        return lobject.ListData(o.list_data)
     else:
         raise EvalError("unknown object type. object_type={}".format(type(o)))
 
@@ -114,6 +116,17 @@ def _eval_if(object_list: List[lobject.Object], environment: env.Env) -> lobject
         return _eval_obj(object_list[3], environment)
 
 
+def _eval_list_data(
+    object_list: List[lobject.Object], environment: env.Env
+) -> lobject.Object:
+    # object_list[0] is "list",
+
+    new_list = []
+    for obj in object_list[1:]:
+        new_list.append(_eval_obj(obj, environment))
+    return lobject.ListData(new_list)
+
+
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):
     head = object_list[0]
     if isinstance(head, lobject.Symbol):
@@ -125,6 +138,8 @@ def _eval_list(object_list: List[lobject.Object], environment: env.Env):
             return _eval_function_def(object_list)
         elif head.s == "if":
             return _eval_if(object_list, environment)
+        elif head.s == "list":
+            return _eval_list_data(object_list, environment)
         else:
             return _eval_function_call(head.s, object_list, environment)
     else:

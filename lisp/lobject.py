@@ -101,24 +101,24 @@ class LList(Object):
     def __eq__(self, other: object) -> bool:
         if other is None or not isinstance(other, LList):
             return False
-        if len(self.object_list) != len(other.object_list):
-            return False
-        for i, e in enumerate(self.object_list):
-            if e != other.object_list[i]:
-                return False
-        return True
+        return _eq_obj_list(self.object_list, other.object_list)
 
     def __str__(self) -> str:
-        sb = []
-        sb.append("(")
+        return _obj_list_as_str(self.object_list)
 
-        for i, o in enumerate(self.object_list):
-            if i > 0:
-                sb.append(" ")
-            sb.append("{}".format(o))
-        sb.append(")")
 
-        return "".join(sb)
+class ListData(Object):
+    def __init__(self, list_data: List[Object]):
+        super().__init__()
+        self.list_data = list_data
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, ListData):
+            return False
+        return _eq_obj_list(self.list_data, other.list_data)
+
+    def __str__(self) -> str:
+        return _obj_list_as_str(self.list_data)
 
 
 class Lambda(Object):
@@ -143,3 +143,25 @@ class Lambda(Object):
 #         for expr in self.body:
 #             sb.append(" {}".format(expr))
 #         return "".join(sb)
+
+
+def _eq_obj_list(lhs: List[Object], rhs: List[Object]) -> bool:
+    if len(lhs) != len(rhs):
+        return False
+    for i, e in enumerate(lhs):
+        if e != rhs[i]:
+            return False
+    return True
+
+
+def _obj_list_as_str(obj_list: List[Object]) -> str:
+    sb = []
+    sb.append("(")
+
+    for i, o in enumerate(obj_list):
+        if i > 0:
+            sb.append(" ")
+        sb.append("{}".format(o))
+    sb.append(")")
+
+    return "".join(sb)
