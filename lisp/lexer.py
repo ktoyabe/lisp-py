@@ -162,7 +162,17 @@ def tokenize(program: str) -> List[Token]:
                 tokens.append(Float(f))
                 continue
 
-            if word in ["define", "list", "print", "lambda", "map", "filter", "reduce"]:
+            if word in [
+                "define",
+                "list",
+                "print",
+                "lambda",
+                "map",
+                "filter",
+                "reduce",
+                "length",
+                "range",
+            ]:
                 tokens.append(Keyword(word))
             elif word == "if":
                 tokens.append(If)
