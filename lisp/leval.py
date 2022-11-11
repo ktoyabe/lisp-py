@@ -234,6 +234,20 @@ def _eval_reduce(
     return accumulator
 
 
+def _eval_length(
+    object_list: List[lobject.Object], environment: env.Env
+) -> lobject.Object:
+    if len(object_list) != 2:
+        raise EvalError("Invalid number of arguments for length {}".format(object_list))
+
+    # check lambda object
+    obj = _eval_obj(object_list[1], environment)
+    if not isinstance(obj, lobject.ListData):
+        raise EvalError("Not a ListData. {}".format(obj))
+
+    return lobject.Integer(len(obj.list_data))
+
+
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):
     head = object_list[0]
     if isinstance(head, lobject.Symbol):
@@ -253,6 +267,8 @@ def _eval_list(object_list: List[lobject.Object], environment: env.Env):
             return _eval_filter(object_list, environment)
         elif head.s == "reduce":
             return _eval_reduce(object_list, environment)
+        elif head.s == "length":
+            return _eval_length(object_list, environment)
         else:
             return _eval_function_call(head.s, object_list, environment)
     else:
