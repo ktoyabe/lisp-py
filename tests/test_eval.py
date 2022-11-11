@@ -56,6 +56,14 @@ def test_string():
     assert eval_program(program) == lobject.String("foo bar")
 
 
+def test_string_op():
+    assert eval_program('(+ "Hello" " World")') == lobject.String("Hello World")
+    assert eval_program('(< "abc" "def")') == lobject.Bool(True)
+    assert eval_program('(> "abc" "def")') == lobject.Bool(False)
+    assert eval_program('(= "abc" "def")') == lobject.Bool(False)
+    assert eval_program('(!= "abc" "def")') == lobject.Bool(True)
+
+
 def test_factorial():
     program = """(
         (define fact (lambda (n) (if (< n 1) 1 (* n (fact (- n 1))))))

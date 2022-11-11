@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from lisp import lobject, env
 
 
@@ -150,13 +150,33 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
     left = _eval_obj(object_list[1], environment)
     right = _eval_obj(object_list[2], environment)
 
-    if type(left) != lobject.Integer:
-        raise EvalError("Left operand must be an integer {}".format(left))
+    left_i = _as_integer(left)
+    right_i = _as_integer(right)
 
-    if type(right) != lobject.Integer:
-        raise EvalError("Right operand must be an integer {}".format(right))
+    if left_i is not None and right_i is not None:
+        return _eval_binary_op_with_intval(op, left_i.i, right_i.i)
 
-    return _eval_binary_op_with_intval(op, left.i, right.i)
+    left_s = _as_string(left)
+    right_s = _as_string(right)
+
+    if left_s is not None and right_s is not None:
+        return _eval_binary_op_with_stringval(op, left_s.string, right_s.string)
+
+    raise EvalError(
+        "Unsupport binary op. op={}, left={}, right={}".format(op, left, right)
+    )
+
+
+def _as_integer(obj: lobject.Object) -> Optional[lobject.Integer]:
+    if isinstance(obj, lobject.Integer):
+        return obj
+    return None
+
+
+def _as_string(obj: lobject.Object) -> Optional[lobject.String]:
+    if isinstance(obj, lobject.String):
+        return obj
+    return None
 
 
 def _eval_binary_op_with_intval(op: str, lhs: int, rhs: int) -> lobject.Object:
@@ -168,6 +188,21 @@ def _eval_binary_op_with_intval(op: str, lhs: int, rhs: int) -> lobject.Object:
         return lobject.Integer(lhs * rhs)
     elif op == "/":
         return lobject.Integer(lhs // rhs)
+    elif op == "<":
+        return lobject.Bool(lhs < rhs)
+    elif op == ">":
+        return lobject.Bool(lhs > rhs)
+    elif op == "=":
+        return lobject.Bool(lhs == rhs)
+    elif op == "!=":
+        return lobject.Bool(lhs != rhs)
+    else:
+        raise EvalError("Invalid infix operator: {}".format(op))
+
+
+def _eval_binary_op_with_stringval(op: str, lhs: str, rhs: str) -> lobject.Object:
+    if op == "+":
+        return lobject.String(lhs + rhs)
     elif op == "<":
         return lobject.Bool(lhs < rhs)
     elif op == ">":
