@@ -121,3 +121,24 @@ def test_list_data_add():
     assert eval_program(program) == lobject.ListData(
         [lobject.Integer(1), lobject.Integer(3), lobject.Integer(2)]
     )
+
+
+def test_map():
+    program = """(
+        (define sqr (lambda (r) (* r r)))
+        (define l (list 1 2 3))
+        (map sqr l)
+    )
+    """
+    result = eval_program(program)
+    assert result == lobject.LList(
+        [
+            lobject.ListData(
+                [
+                    lobject.Integer(1),
+                    lobject.Integer(4),
+                    lobject.Integer(9),
+                ]
+            )
+        ]
+    )
