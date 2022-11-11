@@ -7,7 +7,7 @@ def test_add():
 
     assert result == lobject.LList(
         [
-            lobject.Symbol("+"),
+            lobject.BinaryOp("+"),
             lobject.Integer(1),
             lobject.Integer(2),
         ]
@@ -25,18 +25,18 @@ def test_area_of_circle():
         [
             lobject.LList(
                 [
-                    lobject.Symbol("define"),
+                    lobject.Keyword("define"),
                     lobject.Symbol("r"),
                     lobject.Integer(10),
                 ]
             ),
             lobject.LList(
                 [
-                    lobject.Symbol("*"),
+                    lobject.BinaryOp("*"),
                     lobject.Symbol("pi"),
                     lobject.LList(
                         [
-                            lobject.Symbol("*"),
+                            lobject.BinaryOp("*"),
                             lobject.Symbol("r"),
                             lobject.Symbol("r"),
                         ]
