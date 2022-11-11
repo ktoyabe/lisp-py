@@ -251,6 +251,30 @@ def _eval_length(
     raise EvalError("Not a ListData or LList. {}".format(obj))
 
 
+def _eval_range(
+    object_list: List[lobject.Object], environment: env.Env
+) -> lobject.Object:
+    if len(object_list) != 4:
+        raise EvalError("Invalid number of arguments for range {}".format(object_list))
+
+    # check lambda object
+    start_index = _eval_obj(object_list[1], environment)
+    end_index = _eval_obj(object_list[2], environment)
+    step_size = _eval_obj(object_list[3], environment)
+
+    if not isinstance(start_index, lobject.Integer):
+        raise EvalError("start index must be Integer: {}".format(start_index))
+    if not isinstance(end_index, lobject.Integer):
+        raise EvalError("start index must be Integer: {}".format(start_index))
+    if not isinstance(step_size, lobject.Integer):
+        raise EvalError("start index must be Integer: {}".format(start_index))
+
+    list_data = [
+        lobject.Integer(i) for i in range(start_index.i, end_index.i, step_size.i)
+    ]
+    return lobject.ListData(list_data)  # type: ignore
+
+
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):
     head = object_list[0]
     if isinstance(head, lobject.Symbol):
@@ -272,6 +296,8 @@ def _eval_list(object_list: List[lobject.Object], environment: env.Env):
             return _eval_reduce(object_list, environment)
         elif head.s == "length":
             return _eval_length(object_list, environment)
+        elif head.s == "range":
+            return _eval_range(object_list, environment)
         else:
             return _eval_function_call(head.s, object_list, environment)
     else:

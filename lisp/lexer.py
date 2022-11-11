@@ -124,12 +124,12 @@ def tokenize(program: str) -> List[Token]:
             word = "".join(word_buf)
 
             i = _parse_int(word)
-            if i:
+            if i is not None:
                 tokens.append(Integer(i))
                 continue
 
             f = _parse_float(word)
-            if f:
+            if f is not None:
                 tokens.append(Float(f))
                 continue
 

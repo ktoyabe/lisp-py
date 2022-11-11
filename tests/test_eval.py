@@ -202,3 +202,9 @@ def test_length_list_data():
 
 def test_length_list():
     eval_program("(length (1 2 3 4 5))") == lobject.Integer(5)
+
+
+def test_range():
+    eval_program("(range 0 10 4)") == lobject.ListData(
+        [lobject.Integer(0), lobject.Integer(4), lobject.Integer(8)]
+    )
