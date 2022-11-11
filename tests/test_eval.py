@@ -56,12 +56,30 @@ def test_string():
     assert eval_program(program) == lobject.String("foo bar")
 
 
-def test_string_op():
+def test_string_concat():
     assert eval_program('(+ "Hello" " World")') == lobject.String("Hello World")
-    assert eval_program('(< "abc" "def")') == lobject.Bool(True)
-    assert eval_program('(> "abc" "def")') == lobject.Bool(False)
-    assert eval_program('(= "abc" "def")') == lobject.Bool(False)
-    assert eval_program('(!= "abc" "def")') == lobject.Bool(True)
+
+
+def test_string_eq():
+    assert eval_program('(= "ab c" "ab c")') == lobject.Bool(True)
+    assert eval_program('(= "ab c" "def")') == lobject.Bool(False)
+
+
+def test_string_ne():
+    assert eval_program('(!= "ab c" "ab c")') == lobject.Bool(False)
+    assert eval_program('(!= "ab c" "def")') == lobject.Bool(True)
+
+
+def test_string_less():
+    assert eval_program('(< "ab c" "ab b")') == lobject.Bool(False)
+    assert eval_program('(< "ab c" "ab c")') == lobject.Bool(False)
+    assert eval_program('(< "ab c" "ab d")') == lobject.Bool(True)
+
+
+def test_string_greter():
+    assert eval_program('(> "ab c" "ab b")') == lobject.Bool(True)
+    assert eval_program('(> "ab c" "ab c")') == lobject.Bool(False)
+    assert eval_program('(> "ab c" "ab d")') == lobject.Bool(False)
 
 
 def test_factorial():
