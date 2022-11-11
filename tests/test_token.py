@@ -5,7 +5,7 @@ def test_add():
     tokens = lexer.tokenize("(+ 1 2)")
     assert tokens == [
         lexer.LParen,
-        lexer.Symbol("+"),
+        lexer.BinaryOp("+"),
         lexer.Integer(1),
         lexer.Integer(2),
         lexer.RParen,
@@ -20,18 +20,19 @@ def test_area_of_circle():
         )
     """
     tokens = lexer.tokenize(program)
+
     assert tokens == [
         lexer.LParen,
         lexer.LParen,
-        lexer.Symbol("define"),
+        lexer.Keyword("define"),
         lexer.Symbol("r"),
         lexer.Integer(10),
         lexer.RParen,
         lexer.LParen,
-        lexer.Symbol("*"),
+        lexer.BinaryOp("*"),
         lexer.Symbol("pi"),
         lexer.LParen,
-        lexer.Symbol("*"),
+        lexer.BinaryOp("*"),
         lexer.Symbol("r"),
         lexer.Symbol("r"),
         lexer.RParen,
@@ -45,7 +46,7 @@ def test_string():
     tokens = lexer.tokenize(program)
     assert tokens == [
         lexer.LParen,
-        lexer.Symbol("define"),
+        lexer.Keyword("define"),
         lexer.Symbol("str"),
         lexer.String("Hello World"),
         lexer.RParen,
@@ -57,7 +58,7 @@ def test_float():
     tokens = lexer.tokenize(program)
     assert tokens == [
         lexer.LParen,
-        lexer.Symbol("define"),
+        lexer.Keyword("define"),
         lexer.Symbol("pi"),
         lexer.Float(3.14),
         lexer.RParen,

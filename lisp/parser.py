@@ -22,6 +22,12 @@ def _parse_list(tokens: List[lexer.Token]) -> lobject.Object:
             objects.append(lobject.Integer(t.i))
         elif isinstance(t, lexer.Float):
             objects.append(lobject.Float(t.f))
+        elif isinstance(t, lexer.Keyword):
+            objects.append(lobject.Keyword(t.keyword))
+        elif t == lexer.If:
+            objects.append(lobject.If)
+        elif isinstance(t, lexer.BinaryOp):
+            objects.append(lobject.BinaryOp(t.op))
         elif isinstance(t, lexer.Symbol):
             objects.append(lobject.Symbol(t.s))
         elif isinstance(t, lexer.String):

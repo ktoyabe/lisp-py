@@ -128,6 +128,50 @@ class Lambda(Object):
         self.body: List[Object] = body
 
 
+class Keyword(Object):
+    def __init__(self, keyword: str):
+        super().__init__()
+        self.keyword = keyword
+
+    def __str__(self) -> str:
+        return "{}".format(self.keyword)
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, Keyword):
+            return False
+        return self.keyword == other.keyword
+
+
+class BinaryOp(Object):
+    def __init__(self, op: str):
+        super().__init__()
+        self.op = op
+
+    def __str__(self) -> str:
+        return "{}".format(self.op)
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, BinaryOp):
+            return False
+        return self.op == other.op
+
+
+class _If(Object):
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self) -> str:
+        return "if"
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, _If):
+            return False
+        return True
+
+
+If = _If()
+
+
 # class Lambda(Object):
 #     def __init__(self, params: List[str], body: List[Object]):
 #         super().__init__(ObjectType.LAMBDA)

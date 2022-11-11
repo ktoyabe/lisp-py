@@ -197,14 +197,25 @@ def test_reduce_and_filter():
 
 
 def test_length_list_data():
-    eval_program("(length (list 1 2 3 4 5))") == lobject.Integer(5)
+    assert eval_program("(length (list 1 2 3 4 5))") == lobject.Integer(5)
 
 
 def test_length_list():
-    eval_program("(length (1 2 3 4 5))") == lobject.Integer(5)
+    assert eval_program("(length (1 2 3 4 5))") == lobject.Integer(5)
 
 
 def test_range():
-    eval_program("(range 0 10 4)") == lobject.ListData(
+    assert eval_program("(range 0 10 4)") == lobject.ListData(
         [lobject.Integer(0), lobject.Integer(4), lobject.Integer(8)]
     )
+
+
+def test_sum_n():
+    program = """(
+        (define sum-n
+            (lambda (n a)
+                (if (= n 0) a
+                    (sum-n (- n 1) (+ n a)))))
+        (sum-n 500 0)
+    )"""
+    assert eval_program(program) == lobject.LList([lobject.Integer((500 * 501) // 2)])

@@ -75,6 +75,35 @@ class _SpecialToken(Token):
 
 LParen = _SpecialToken("(")
 RParen = _SpecialToken(")")
+If = _SpecialToken("if")
+
+
+class Keyword(Token):
+    def __init__(self, keyword: str):
+        self.keyword = keyword
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, Keyword):
+            return False
+
+        return self.keyword == other.keyword
+
+    def __str__(self) -> str:
+        return self.keyword
+
+
+class BinaryOp(Token):
+    def __init__(self, op: str):
+        self.op = op
+
+    def __eq__(self, other: object) -> bool:
+        if other is None or not isinstance(other, BinaryOp):
+            return False
+
+        return self.op == other.op
+
+    def __str__(self) -> str:
+        return self.op
 
 
 class TokenError(Exception):
@@ -133,7 +162,24 @@ def tokenize(program: str) -> List[Token]:
                 tokens.append(Float(f))
                 continue
 
-            tokens.append(Symbol(word))
+            if word in [
+                "define",
+                "list",
+                "print",
+                "lambda",
+                "map",
+                "filter",
+                "reduce",
+                "length",
+                "range",
+            ]:
+                tokens.append(Keyword(word))
+            elif word == "if":
+                tokens.append(If)
+            elif word in ["+", "-", "*", "/", "%", "<", ">", "=", "!="]:
+                tokens.append(BinaryOp(word))
+            else:
+                tokens.append(Symbol(word))
 
     return tokens
 

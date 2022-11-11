@@ -24,27 +24,89 @@ def _eval_symbol(s: str, environment: env.Env) -> lobject.Object:
         return val
 
 
-def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
-    if isinstance(o, lobject.LList):
-        return _eval_list(o.object_list, environment)
-    elif o == lobject.Void:
-        return lobject.Void
-    elif isinstance(o, lobject.Lambda):
-        raise NotImplementedError("eval lambda is not implemented")
-    elif isinstance(o, lobject.Bool):
-        raise NotImplementedError("eval bool is not implemented")
-    elif isinstance(o, lobject.Integer):
-        return lobject.Integer(o.i)
-    elif isinstance(o, lobject.Float):
-        return lobject.Float(o.f)
-    elif isinstance(o, lobject.Symbol):
-        return _eval_symbol(o.s, environment)
-    elif isinstance(o, lobject.String):
-        return lobject.String(o.string)
-    elif isinstance(o, lobject.ListData):
-        return lobject.ListData(o.list_data)
+def _eval_keyword(obj_list: List[lobject.Object], environment: env.Env):
+    head = obj_list[0]
+    if not isinstance(head, lobject.Keyword):
+        raise EvalError("Invalid keyword: {}".format(head))
+    kw = head.keyword
+
+    if kw == "define":
+        return _eval_define(obj_list, environment)
+    elif kw == "list":
+        return _eval_list_data(obj_list, environment)
+    elif kw == "lambda":
+        return _eval_function_def(obj_list)
+    elif kw == "map":
+        return _eval_map(obj_list, environment)
+    elif kw == "filter":
+        return _eval_filter(obj_list, environment)
+    elif kw == "reduce":
+        return _eval_reduce(obj_list, environment)
+    elif kw == "length":
+        return _eval_length(obj_list, environment)
+    elif kw == "range":
+        return _eval_range(obj_list, environment)
     else:
-        raise EvalError("unknown object type. object_type={}".format(type(o)))
+        raise EvalError("Unbound keyword: {}".format(kw))
+
+
+def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
+    current_obj = o
+    current_env = environment
+
+    while True:
+        if isinstance(current_obj, lobject.LList):
+            head = current_obj.object_list[0]
+            if isinstance(head, lobject.BinaryOp):
+                return _eval_binary_op(current_obj.object_list, current_env)
+            elif isinstance(head, lobject.Keyword):
+                return _eval_keyword(current_obj.object_list, current_env)
+            elif head == lobject.If:
+                current_obj = _eval_if_wo_body_eval(current_obj, current_env)
+                continue
+            elif isinstance(head, lobject.Symbol):
+                # TODO: I do not under stand this block.
+                lambda_obj = current_env.get(head.s)
+                if lambda_obj is None:
+                    raise EvalError("Unvound function: {}", head.s)
+
+                if not isinstance(lambda_obj, lobject.Lambda):
+                    raise EvalError("Not a lambda")
+                new_env = env.extend(current_env)
+                for i, param in enumerate(lambda_obj.params):
+                    val = _eval_obj(current_obj.object_list[i + 1], current_env)
+                    new_env.set(param, val)
+
+                current_obj = lobject.LList(lambda_obj.body)
+                current_env = new_env
+                continue
+            else:
+                new_list = []
+                for obj in current_obj.object_list:
+                    result = _eval_obj(obj, current_env)
+                    if result == lobject.Void:
+                        pass
+                    else:
+                        new_list.append(result)
+                return lobject.LList(new_list)
+        elif current_obj == lobject.Void:
+            return lobject.Void
+        elif isinstance(current_obj, lobject.Lambda):
+            return lobject.Void
+        elif isinstance(current_obj, lobject.Bool):
+            return lobject.Bool(current_obj.b)
+        elif isinstance(current_obj, lobject.Integer):
+            return lobject.Integer(current_obj.i)
+        elif isinstance(current_obj, lobject.Float):
+            return lobject.Float(current_obj.f)
+        elif isinstance(current_obj, lobject.Symbol):
+            return _eval_symbol(current_obj.s, current_env)
+        elif isinstance(current_obj, lobject.String):
+            return lobject.String(current_obj.string)
+        elif isinstance(current_obj, lobject.ListData):
+            return lobject.ListData(current_obj.list_data)
+        else:
+            raise EvalError("unknown object type. object_type={}".format(type(o)))
 
 
 def _eval_define(
@@ -114,6 +176,23 @@ def _eval_if(object_list: List[lobject.Object], environment: env.Env) -> lobject
         return _eval_obj(object_list[2], environment)
     else:
         return _eval_obj(object_list[3], environment)
+
+
+def _eval_if_wo_body_eval(
+    current_obj: lobject.LList, current_env: env.Env
+) -> lobject.Object:
+    if len(current_obj.object_list) != 4:
+        raise EvalError("Invalid number of arguments for if statement")
+
+    cond_obj = _eval_obj(current_obj.object_list[1], current_env)
+    if not isinstance(cond_obj, lobject.Bool):
+        raise EvalError("Condition must be a boolean")
+    cond = cond_obj.b
+
+    if cond is True:
+        return current_obj.object_list[2]
+    else:
+        return current_obj.object_list[3]
 
 
 def _eval_list_data(
@@ -318,10 +397,10 @@ def _eval_binary_op(object_list: List[lobject.Object], environment: env.Env):
                 len(object_list)
             )
         )
-    if not isinstance(object_list[0], lobject.Symbol):
+    if not isinstance(object_list[0], lobject.BinaryOp):
         raise EvalError("Operator must be Symbol. {}".format(object_list[0]))
 
-    op = object_list[0].s
+    op = object_list[0].op
     left = _eval_obj(object_list[1], environment)
     right = _eval_obj(object_list[2], environment)
 
