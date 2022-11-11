@@ -11,11 +11,17 @@ def evaluate(o: lobject.Object, environment: env.Env):
 
 
 def _eval_symbol(s: str, environment: env.Env) -> lobject.Object:
-    val = environment.get(s)
-    if val is None:
-        raise EvalError("Unbound symbol: {}".format(s))
-
-    return val
+    if s == "#t":
+        return lobject.Bool(True)
+    elif s == "#f":
+        return lobject.Bool(False)
+    elif s == "#nil":
+        return lobject.Void
+    else:
+        val = environment.get(s)
+        if val is None:
+            raise EvalError("Unbound symbol: {}".format(s))
+        return val
 
 
 def _eval_obj(o: lobject.Object, environment: env.Env) -> lobject.Object:
