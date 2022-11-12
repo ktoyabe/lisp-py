@@ -14,7 +14,9 @@
 		"python.linting.pylintEnabled": false,
 		"python.linting.flake8Enabled": true,
 		"python.linting.flake8Args": [
-			"--ignore=E501"
+			"--ignore=E501",
+			"--max-line-length=127",
+			"--exclude=tests/*"
 		],
 		"python.linting.mypyEnabled": true,
 		"python.testing.pytestEnabled": true,
