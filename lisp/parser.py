@@ -1,7 +1,6 @@
 from typing import List
 
-from lisp import lobject
-from lisp import lexer
+from lisp import lobject, token
 
 
 class ParseError(Exception):
@@ -9,40 +8,40 @@ class ParseError(Exception):
         super().__init__("Parse error: {}".format(err))
 
 
-def _parse_list(tokens: List[lexer.Token]) -> lobject.Object:
+def _parse_list(tokens: List[token.Token]) -> lobject.Object:
     t = tokens.pop(-1)
-    if t != lexer.LParen:
+    if t != token.LParen:
         raise ParseError("Expected LParen, found {}".format(t))
 
     objects: List[lobject.Object] = []
     while len(tokens) != 0:
         t = tokens.pop(-1)
 
-        if isinstance(t, lexer.Integer):
+        if isinstance(t, token.Integer):
             objects.append(lobject.Integer(t.i))
-        elif isinstance(t, lexer.Float):
+        elif isinstance(t, token.Float):
             objects.append(lobject.Float(t.f))
-        elif isinstance(t, lexer.Keyword):
+        elif isinstance(t, token.Keyword):
             objects.append(lobject.Keyword(t.keyword))
-        elif t == lexer.If:
+        elif t == token.If:
             objects.append(lobject.If)
-        elif isinstance(t, lexer.BinaryOp):
+        elif isinstance(t, token.BinaryOp):
             objects.append(lobject.BinaryOp(t.op))
-        elif isinstance(t, lexer.Symbol):
+        elif isinstance(t, token.Symbol):
             objects.append(lobject.Symbol(t.s))
-        elif isinstance(t, lexer.String):
+        elif isinstance(t, token.String):
             objects.append(lobject.String(t.string))
-        elif t == lexer.LParen:
-            tokens.append(lexer.LParen)
+        elif t == token.LParen:
+            tokens.append(token.LParen)
             sub_list = _parse_list(tokens)
             objects.append(sub_list)
-        elif t == lexer.RParen:
+        elif t == token.RParen:
             return lobject.LList(objects)
 
     return lobject.LList(objects)
 
 
-def parse(tokens: List[lexer.Token]) -> lobject.Object:
+def parse(tokens: List[token.Token]) -> lobject.Object:
     if len(tokens) == 0:
         raise ParseError("tokens are empty.")
 
