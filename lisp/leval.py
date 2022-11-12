@@ -46,6 +46,8 @@ def _eval_keyword(obj_list: List[lobject.Object], environment: env.Env):
         return _eval_length(obj_list, environment)
     elif kw == "range":
         return _eval_range(obj_list, environment)
+    elif kw == "print":
+        return _eval_print(obj_list, environment)
     else:
         raise EvalError("Unbound keyword: {}".format(kw))
 
@@ -352,6 +354,19 @@ def _eval_range(
         lobject.Integer(i) for i in range(start_index.i, end_index.i, step_size.i)
     ]
     return lobject.ListData(list_data)  # type: ignore
+
+
+def _eval_print(
+    object_list: List[lobject.Object], environment: env.Env
+) -> lobject.Object:
+    if len(object_list) != 2:
+        raise EvalError("Invalid number of arguments for print {}".format(object_list))
+
+    # check lambda object
+    obj = _eval_obj(object_list[1], environment)
+
+    print("{}".format(obj))
+    return lobject.Void
 
 
 def _eval_list(object_list: List[lobject.Object], environment: env.Env):

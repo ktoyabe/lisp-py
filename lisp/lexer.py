@@ -12,6 +12,7 @@ KEYWORDS = [
     "reduce",
     "length",
     "range",
+    "print",
 ]
 
 IF_KEYWORD = "if"
