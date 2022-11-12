@@ -219,3 +219,17 @@ def test_sum_n():
         (sum-n 500 0)
     )"""
     assert eval_program(program) == lobject.LList([lobject.Integer((500 * 501) // 2)])
+
+
+def test_print(capfd):
+    program = """(
+        (define a 10)
+        (define str "foo bar")
+        (print a)
+        (print str)
+        (print (+ 1 2))
+    )
+    """
+    assert eval_program(program) == lobject.LList([])
+    out, err = capfd.readouterr()
+    assert out == "10\nfoo bar\n3\n"
