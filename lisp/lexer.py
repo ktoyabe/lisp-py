@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from lisp import token
+from lisp.token import Token, TokenType
 
 
 class TokenError(Exception):
@@ -8,8 +8,8 @@ class TokenError(Exception):
         super().__init__("Tokenization error: {}".format(err))
 
 
-def tokenize(program: str) -> List[token.Token]:
-    tokens: List[token.Token] = []
+def tokenize(program: str) -> List[Token]:
+    tokens: List[Token] = []
     chars = list(program)
 
     if len(chars) == 0:
@@ -18,9 +18,9 @@ def tokenize(program: str) -> List[token.Token]:
     while len(chars) > 0:
         ch = chars.pop(0)
         if ch == "(":
-            tokens.append(token.LParen)
+            tokens.append(Token(TokenType.LPAREN, ch))
         elif ch == ")":
-            tokens.append(token.RParen)
+            tokens.append(Token(TokenType.RPAREN, ch))
         elif ch == '"':
             # read string
             word_buf = []
@@ -33,7 +33,7 @@ def tokenize(program: str) -> List[token.Token]:
                 raise TokenError("Unterminated string: {}".format("".join(word_buf)))
 
             word = "".join(word_buf)
-            tokens.append(token.String(word))
+            tokens.append(Token(TokenType.STRING, word))
         else:
             word_buf = []
             while len(chars) > 0 and not _is_whitespace(ch) and ch != "(" and ch != ")":
@@ -51,12 +51,12 @@ def tokenize(program: str) -> List[token.Token]:
 
             i = _parse_int(word)
             if i is not None:
-                tokens.append(token.Integer(i))
+                tokens.append(Token(TokenType.INT, word))
                 continue
 
             f = _parse_float(word)
             if f is not None:
-                tokens.append(token.Float(f))
+                tokens.append(Token(TokenType.FLOAT, word))
                 continue
 
             if word in [
@@ -70,13 +70,13 @@ def tokenize(program: str) -> List[token.Token]:
                 "length",
                 "range",
             ]:
-                tokens.append(token.Keyword(word))
+                tokens.append(Token(TokenType.KEYWORD, word))
             elif word == "if":
-                tokens.append(token.If)
+                tokens.append(Token(TokenType.IF, word))
             elif word in ["+", "-", "*", "/", "%", "<", ">", "=", "!="]:
-                tokens.append(token.BinaryOp(word))
+                tokens.append(Token(TokenType.BINARY_OP, word))
             else:
-                tokens.append(token.Symbol(word))
+                tokens.append(Token(TokenType.SYMBOL, word))
 
     return tokens
 
