@@ -2,6 +2,22 @@ from typing import List, Optional
 
 from lisp.token import Token, TokenType
 
+KEYWORDS = [
+    "define",
+    "list",
+    "print",
+    "lambda",
+    "map",
+    "filter",
+    "reduce",
+    "length",
+    "range",
+]
+
+IF_KEYWORD = "if"
+
+BINARY_OP = ["+", "-", "*", "/", "%", "<", ">", "=", "!="]
+
 
 class TokenError(Exception):
     def __init__(self, err: str):
@@ -59,21 +75,11 @@ def tokenize(program: str) -> List[Token]:
                 tokens.append(Token(TokenType.FLOAT, word))
                 continue
 
-            if word in [
-                "define",
-                "list",
-                "print",
-                "lambda",
-                "map",
-                "filter",
-                "reduce",
-                "length",
-                "range",
-            ]:
+            if word in KEYWORDS:
                 tokens.append(Token(TokenType.KEYWORD, word))
-            elif word == "if":
+            elif word == IF_KEYWORD:
                 tokens.append(Token(TokenType.IF, word))
-            elif word in ["+", "-", "*", "/", "%", "<", ">", "=", "!="]:
+            elif word in BINARY_OP:
                 tokens.append(Token(TokenType.BINARY_OP, word))
             else:
                 tokens.append(Token(TokenType.SYMBOL, word))
